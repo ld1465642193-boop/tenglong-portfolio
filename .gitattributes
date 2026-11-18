@@ -1,0 +1,13 @@
+﻿# 统一换行符，避免跨平台克隆时 git 报 CRLF 警告或文件差异
+* text=auto eol=lf
+
+# 图片与字体按二进制处理，禁止行尾转换损坏文件
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
