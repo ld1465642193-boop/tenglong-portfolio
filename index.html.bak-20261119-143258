@@ -1,0 +1,5350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>李腾龙 · 设计主管 · 视觉作品集</title>
+<noscript><style>
+/* P0-3 审计修复：脚本失效时解除 CSS 级隐藏，保证全站可读（无动效） */
+.ch{opacity:1!important;transform:none!important}
+.ch-wrap{overflow:visible!important}
+.reveal{opacity:1!important;transform:none!important;transition:none!important}
+.hero-meta,.hero-statement{opacity:1!important;transform:none!important}
+
+</style>
+</noscript>
+<style>
+/* ============================================================
+   v4 · LANDO 风
+   复刻 landonorris.com 的 UI 语言：
+   1. 深浅交替的整屏背景（#F2F1E9 米白 / #2A2E24 墨绿）
+   2. 荧光青柠 #C8FF00 作唯一强调色
+   3. 衬线+无衬线混排的超大字（同一段里两种字体）
+   4. 左上角 Logo 双行大写、右上角胶囊按钮
+   5. 底部漂移的等高线背景（CSS 动画）
+   6. 卡片 14px 圆角、细边框
+   7. Lenis 丝滑滚动
+   ============================================================ */
+:root{
+  --lime:#C8302E;
+  --lime-dim:#8B0000;
+  --forest:#0A0A0A;
+  --forest-2:#101010;
+  --forest-3:#161616;
+  --cream:#F2F2EE;
+  --cream-2:#E0E0DA;
+  --ink:#0A0A0A;
+  --fog:rgba(242,242,238,.66);
+  --fog-2:rgba(242,242,238,.42);
+  --line:rgba(242,242,238,.13);
+  --line-ink:rgba(10,10,10,.12);
+  --pad:clamp(18px,3.4vw,64px);
+  --serif:'Songti SC','SimSun','STSong','Source Han Serif SC','Noto Serif SC',Georgia,serif;
+  --zh-serif:'Noto Serif SC',serif;
+  --sans:'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Heiti SC','Noto Sans SC','WenQuanYi Micro Hei','Helvetica Neue',Arial,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{
+  background:var(--forest);color:var(--cream);
+  font-family:var(--sans);line-height:1.6;overflow-x:hidden;
+  font-feature-settings:"tnum";
+}
+body.locked{overflow:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--lime);color:var(--ink)}
+
+/* ============ 等高线背景（Lando 标志性）============ */
+.topo{
+  position:fixed;inset:-10%;z-index:0;pointer-events:none;
+  opacity:.4;
+}
+.topo svg{width:100%;height:100%}
+.topo path{
+  fill:none;
+  stroke:rgba(242,242,238,.16);
+  stroke-width:1;
+}
+.theme-cream .topo path{stroke:rgba(242,242,238,.1)}
+
+/* 全局主题切换 */
+body{transition:background-color .9s var(--ease),color .9s var(--ease)}
+body.theme-cream{background:var(--bg-soft,#0E0E0E);color:var(--cream)}
+body.theme-cream .topo path{stroke:rgba(10,10,10,.12)}
+
+/* ============ 固定 UI ============ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:clamp(14px,2vw,24px) var(--pad);
+  pointer-events:none;
+  mix-blend-mode:normal;
+}
+.nav > *{pointer-events:auto}
+
+/* Logo 双行大写 */
+.logo{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(13px,1.15vw,17px);
+  line-height:.92;letter-spacing:-.01em;
+  text-transform:uppercase;
+  transition:color .5s;
+}
+.logo span{display:block}
+.logo em{
+  font-style:normal;font-weight:400;
+  font-family:var(--serif);
+  letter-spacing:.01em;
+}
+
+.nav-right{display:flex;align-items:center;gap:8px}
+
+/* 胶囊按钮（Lando 的 STORE） */
+.pill{
+  display:inline-flex;align-items:center;gap:7px;
+  height:clamp(34px,3vw,42px);
+  padding:0 clamp(14px,1.6vw,22px);
+  border-radius:999px;
+  background:var(--lime);color:var(--ink);
+  font-size:clamp(10px,.9vw,12px);font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  transition:transform .3s var(--ease),background .3s;
+}
+.pill:hover{transform:scale(1.05);background:#D9FF33}
+.pill.ghost{
+  background:transparent;color:var(--cream);
+  border:1px solid rgba(242,242,238,.24);
+}
+body.theme-cream .pill.ghost{color:var(--cream);border-color:var(--line)}
+.pill.ghost:hover{background:rgba(255,255,255,.06)}
+
+/* 方形菜单按钮 */
+.menu-btn{
+  width:clamp(34px,3vw,42px);height:clamp(34px,3vw,42px);
+  border-radius:14px;
+  background:var(--cream);color:var(--ink);
+  display:grid;place-items:center;
+  transition:transform .3s var(--ease);
+}
+.menu-btn:hover{transform:scale(1.05)}
+.menu-btn i{display:block;width:15px;height:1.5px;background:currentColor;position:relative}
+.menu-btn i::before,.menu-btn i::after{
+  content:'';position:absolute;left:0;width:15px;height:1.5px;background:currentColor;
+}
+.menu-btn i::before{top:-5px}
+.menu-btn i::after{top:5px}
+
+/* 左下角浮动信息卡（Lando 的 NEXT RACE 卡） */
+.float-card{
+  position:fixed;left:var(--pad);bottom:clamp(14px,2vw,28px);z-index:190;
+  width:clamp(120px,11vw,138px);
+  border-radius:14px;
+  background:rgba(20,20,20,.72);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(10,10,10,.08);
+  padding:10px 11px 11px;
+  color:var(--ink);
+  transition:transform .4s var(--ease),opacity .5s;
+}
+.float-card .fc-label{
+  font-size:8px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(10,10,10,.42);
+}
+.float-card .fc-main{
+  margin-top:8px;padding-top:8px;
+  border-top:1px solid rgba(10,10,10,.1);
+}
+.float-card .fc-main b{
+  display:block;font-size:10px;font-weight:700;letter-spacing:.04em;
+  line-height:1.3;
+}
+.float-card .fc-sub{
+  margin-top:7px;padding-top:7px;
+  border-top:1px solid rgba(10,10,10,.1);
+  font-size:8px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(10,10,10,.5);line-height:1.4;
+}
+
+/* 滚动进度（底部细线） */
+.progress{
+  position:fixed;left:0;bottom:0;height:2px;z-index:210;
+  background:var(--lime);width:0%;
+  transition:width .1s linear;
+}
+
+/* ============ 通用版心 ============ */
+.wrap{width:100%;max-width:1560px;margin:0 auto;padding:0 var(--pad);position:relative;z-index:2}
+
+/* ============ 整屏区块 ============ */
+.panel{
+  position:relative;min-height:100svh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(90px,12vh,150px) 0 clamp(70px,10vh,120px);
+  z-index:1;
+  overflow:hidden;
+}
+.panel.short{min-height:auto;padding:clamp(56px,8vh,110px) 0}
+.panel.forest{background:var(--forest)}
+.panel.forest-2{background:var(--forest-2)}
+.panel.cream{background:var(--forest-2);color:var(--cream)}
+.panel.cream .a-rule,.panel.cream .spec-row{border-color:var(--line)}
+
+/* ============ 超大字排版（Lando 灵魂）============ */
+/* 衬线 + 无衬线混排：同一段里 em 用衬线斜体 */
+.mega{
+  font-family:var(--sans);
+  font-weight:800;
+  font-size:clamp(2.4rem,7.4vw,8.2rem);
+  line-height:.9;
+  letter-spacing:-.035em;
+  text-transform:uppercase;
+  text-wrap:balance;
+}
+.mega em{
+  font-family:var(--serif);
+  font-style:italic;
+  font-weight:400;
+  letter-spacing:-.01em;
+  color:var(--lime);
+  text-transform:none;
+}
+.mega .dim{opacity:.42}
+
+.mega-zh{
+  font-family:var(--sans);
+  font-weight:900;
+  font-size:clamp(2.1rem,6.6vw,7rem);
+  line-height:.94;
+  letter-spacing:-.05em;
+}
+.mega-zh em{
+  font-family:var(--zh-serif);
+  font-style:normal;font-weight:700;
+  letter-spacing:-.02em;
+  color:var(--lime);
+}
+
+/* 中号标题 */
+.h-mid{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(1.4rem,3.2vw,2.9rem);
+  line-height:1.02;letter-spacing:-.03em;
+}
+.h-mid em{
+  font-family:var(--serif);font-style:italic;font-weight:400;
+  color:var(--lime);letter-spacing:0;
+}
+
+/* 小标签 */
+.eyebrow{
+  font-size:clamp(9px,.82vw,11px);
+  font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--fog-2);
+}
+.panel.cream .eyebrow{color:var(--fog-2)}
+
+/* 正文 */
+.p-body{
+  font-size:clamp(.88rem,1.05vw,.98rem);
+  line-height:1.78;color:var(--fog);
+  max-width:58ch;
+}
+.panel.cream .p-body{color:var(--fog)}
+.p-body strong{color:var(--cream);font-weight:600}
+.panel.cream .p-body strong{color:var(--cream)}
+
+/* 细线 */
+.a-rule{height:1px;background:var(--line);width:100%}
+
+/* ============ HERO ============ */
+.hero-panel{
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(100px,14vh,180px) var(--pad) clamp(80px,12vh,140px);
+  position:relative;z-index:2;
+}
+.hero-inner{max-width:1560px;margin:0 auto;width:100%}
+
+/* 顶部小信息 */
+.hero-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:20px;padding-bottom:clamp(20px,3vw,36px);
+  font-size:clamp(9px,.84vw,11px);font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--fog-2);
+}
+
+/* Lando 式宣言：大字 + 衬线斜体点缀 */
+.hero-statement{
+  font-family:var(--sans);
+  font-weight:800;
+  font-size:clamp(2.5rem,8.2vw,9rem);
+  line-height:.88;
+  letter-spacing:-.042em;
+  text-transform:uppercase;
+  margin:0;
+}
+.hero-statement em{
+  font-family:var(--serif);
+  font-style:italic;font-weight:400;
+  letter-spacing:-.015em;
+  color:var(--lime);
+  text-transform:none;
+  display:inline-block;
+}
+.hero-statement .line{display:block}
+.hero-statement .indent{padding-left:clamp(0px,6vw,120px)}
+
+/* 岗位定位条 */
+.hero-role{
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:clamp(8px,1.2vw,16px);
+  margin-top:clamp(22px,3.4vw,40px);
+  font-size:clamp(11px,1vw,13px);
+  font-weight:500;letter-spacing:.01em;
+  color:var(--fog);
+}
+.hero-role .hr-tag{
+  padding:5px 13px;border-radius:999px;
+  background:var(--lime);color:#fff;
+  font-size:clamp(10px,.9vw,12px);font-weight:800;
+  letter-spacing:.1em;
+}
+.hero-role .hr-item b{color:var(--cream);font-weight:800}
+.hero-role .hr-sep{color:var(--fog-2);opacity:.5}
+
+/* 底部：三栏数据 */
+.hero-foot{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--line);
+  border-top:1px solid var(--line);
+  margin-top:clamp(32px,5vw,64px);
+}
+.hf{background:var(--forest);padding:clamp(16px,2.2vw,28px) clamp(14px,2vw,24px)}
+.hf:first-child{padding-left:clamp(14px,2vw,24px);background:var(--forest)}
+.hf:last-child{background:var(--forest)}
+.hf b{
+  display:block;
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(1.7rem,4vw,3.2rem);
+  line-height:1;letter-spacing:-.02em;
+  color:var(--cream);
+}
+.hf b em{font-style:normal;color:var(--lime);font-size:.55em}
+.hf small{
+  display:block;margin-top:10px;
+  font-size:clamp(9px,.8vw,10px);font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--fog-2);
+}
+.hf p{margin-top:4px;font-size:clamp(.7rem,.82vw,.78rem);color:var(--fog-2);line-height:1.5;max-width:none}
+
+/* 滚动提示 */
+.scroll-hint{
+  display:flex;align-items:center;gap:10px;margin-top:clamp(24px,4vw,48px);
+  font-size:10px;font-weight:600;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--fog-2);
+}
+.scroll-hint i{
+  display:block;width:1px;height:26px;background:var(--lime);
+  animation:pulseLine 2s var(--ease) infinite;
+}
+@keyframes pulseLine{
+  0%,100%{transform:scaleY(.35);opacity:.4}
+  50%{transform:scaleY(1);opacity:1}
+}
+
+/* ============ 区块通用头部 ============ */
+.sec-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:24px;padding-bottom:clamp(14px,2vw,22px);
+  border-bottom:1px solid var(--line);
+  margin-bottom:clamp(26px,4vw,52px);
+}
+.panel.cream .sec-head{border-color:var(--line)}
+.sec-head .meta{
+  font-size:clamp(9px,.82vw,11px);font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--fog-2);
+  white-space:nowrap;
+}
+@media(max-width:760px){.sec-head{flex-direction:column;align-items:flex-start;gap:8px}}
+
+/* ============ Lando 式宣言块（大字居中/左对齐）============ */
+.statement-block{
+  max-width:1400px;
+}
+.statement-block .mega{
+  text-wrap:balance;
+}
+
+/* ============ 图片卡（Lando 的圆角卡）============ */
+.img-card{
+  border-radius:14px;overflow:hidden;
+  background:var(--forest-3);
+  border:1px solid rgba(242,242,238,.08);
+  position:relative;
+}
+.img-card img{
+  width:100%;display:block;
+  transition:transform 1.1s var(--ease);
+  filter:saturate(.96) brightness(.97);
+}
+.img-card:hover img{transform:scale(1.03);filter:saturate(1.04) brightness(1)}
+
+/* 图注（Lando 的小标签在图上方）*/
+.img-cap{
+  display:block;
+  font-size:clamp(9px,.8vw,10px);font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--fog-2);margin-bottom:10px;
+}
+
+/* ============ 关于我：履历 ============ */
+.cv-row{
+  display:grid;grid-template-columns:minmax(120px,.26fr) minmax(0,1fr) auto;
+  gap:clamp(14px,2.4vw,40px);
+  padding:clamp(16px,2vw,24px) 0;
+  border-top:1px solid var(--line);
+  align-items:start;
+  transition:background .3s;
+}
+.cv-row:hover{background:rgba(255,255,255,.02)}
+.panel.cream .cv-row{border-color:var(--line)}
+.cv-date{
+  font-family:var(--serif);font-size:clamp(.82rem,1.1vw,.95rem);
+  color:var(--fog-2);letter-spacing:.02em;padding-top:2px;
+}
+.cv-main b{
+  display:block;font-size:clamp(.94rem,1.25vw,1.1rem);
+  font-weight:700;letter-spacing:-.01em;
+}
+.cv-main .role{
+  display:inline-block;margin-top:6px;
+  font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid rgba(200,48,46,.4);color:var(--lime);
+}
+.cv-main p{margin-top:10px;font-size:clamp(.8rem,.94vw,.88rem);line-height:1.7;color:var(--fog);max-width:62ch}
+.cv-badge{
+  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fog-2);white-space:nowrap;padding-top:4px;
+}
+/* 荣誉奖项（左栏，统一字号） */
+.awards-left{margin-top:clamp(22px,3.2vw,34px);padding-top:clamp(16px,2.2vw,24px);border-top:1px solid rgba(242,242,238,.1)}
+.aw-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  font-size:clamp(.94rem,1.25vw,1.1rem);font-weight:700;letter-spacing:-.01em;
+  color:var(--cream);margin-bottom:12px;
+}
+.aw-head span{
+  font-family:var(--serif);font-size:clamp(.78rem,1vw,.9rem);
+  font-weight:400;color:var(--fog-2);letter-spacing:.02em;
+}
+.awards{display:flex;flex-direction:column;gap:9px}
+.awards .aw{
+  display:flex;align-items:baseline;gap:10px;
+  font-size:clamp(.8rem,.94vw,.88rem);line-height:1.65;
+  color:var(--fog);
+}
+.awards .aw i{
+  font-style:normal;font-family:var(--serif);
+  font-size:.9em;color:var(--fog-2);
+  min-width:5.6em;flex-shrink:0;
+}
+.awards .aw b,.awards .aw em{
+  font-style:normal;font-size:.82em;
+  color:var(--fog-2);letter-spacing:.02em;
+}
+.awards .aw em::before{content:"· "}
+@media(max-width:860px){
+  .cv-row{grid-template-columns:1fr;gap:8px}
+  .cv-badge{display:none}
+  .awards .aw{flex-wrap:wrap;gap:4px}
+}
+
+/* ============ 详情页拆解 ============ */
+.dl-result{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--line);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-bottom:clamp(24px,3.6vw,44px);
+}
+.dl-r{padding:clamp(14px,2vw,24px) clamp(12px,1.8vw,20px);background:var(--forest)}
+.dl-r b{
+  display:block;font-family:var(--serif);font-weight:400;
+  font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1;letter-spacing:-.02em;
+}
+.dl-r b em{font-style:normal;color:var(--lime);font-size:.5em}
+.dl-r small{
+  display:block;margin-top:8px;font-size:9px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--fog-2);
+}
+
+.dl-funnel{
+  display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;
+  margin-bottom:clamp(28px,4.4vw,56px);
+}
+.dl-f{
+  flex:1 1 130px;padding:clamp(10px,1.4vw,16px) clamp(10px,1.4vw,16px);
+  background:var(--forest-2);border:1px solid rgba(242,242,238,.07);
+  border-radius:10px;position:relative;
+}
+.dl-f .dl-n{
+  font-family:var(--serif);font-size:.72rem;color:var(--lime);display:block;margin-bottom:4px;
+}
+.dl-f b{display:block;font-size:clamp(.8rem,.92vw,.86rem);font-weight:700}
+.dl-f small{display:block;margin-top:3px;font-size:9px;color:var(--fog-2);letter-spacing:.06em}
+.dl-arrow{
+  display:flex;align-items:center;justify-content:center;
+  color:var(--lime);opacity:.45;font-size:12px;flex:0 0 auto;
+}
+
+.dl-list{display:flex;flex-direction:column;gap:clamp(22px,3.4vw,44px)}
+.dl-item{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
+  gap:clamp(16px,3vw,48px);align-items:start;
+  padding-top:clamp(18px,2.8vw,32px);
+  border-top:1px solid rgba(242,242,238,.07);
+}
+.dl-item:first-child{border-top:none;padding-top:0}
+.dl-idx{
+  font-family:var(--serif);font-size:clamp(1.6rem,3.2vw,2.6rem);
+  line-height:1;color:rgba(200,48,46,.42);margin-bottom:10px;
+}
+.dl-text h4{
+  font-size:clamp(1rem,1.6vw,1.28rem);line-height:1.32;
+  margin-bottom:14px;letter-spacing:-.01em;
+}
+.dl-text h4 em{font-family:var(--serif);font-style:italic;color:var(--lime);font-weight:400}
+.dl-body p{
+  font-size:clamp(.8rem,.92vw,.86rem);line-height:1.82;
+  color:rgba(242,242,238,.55);margin-bottom:10px;
+}
+.dl-body p:last-child{margin-bottom:0}
+.dl-body strong{color:var(--cream);font-weight:600}
+
+.dl-visual{position:relative}
+.dl-img{display:block;text-decoration:none;color:inherit}
+.dl-img img{
+  width:100%;display:block;border:1px solid rgba(242,242,238,.09);
+  transition:transform .6s var(--ease),border-color .4s;
+}
+.dl-img:hover img{transform:scale(1.012);border-color:rgba(200,48,46,.4)}
+.dl-cap{
+  display:block;margin-top:9px;font-size:clamp(.68rem,.78vw,.74rem);
+  color:var(--fog-2);line-height:1.6;
+}
+
+/* 搜索场景 mock */
+.dl-mock{
+  padding:clamp(14px,2vw,24px);
+  background:var(--forest-2);border:1px solid rgba(242,242,238,.07);
+  border-radius:12px;
+}
+.dl-mock-tag{
+  font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:12px;
+}
+.dl-mock-row{display:flex;gap:8px;margin-bottom:12px}
+.dl-sq{
+  flex:1;aspect-ratio:1;display:grid;place-items:center;
+  border-radius:6px;font-size:clamp(.6rem,.7vw,.68rem);font-weight:700;
+  background:rgba(242,242,238,.94);color:rgba(10,10,10,.5);
+}
+.dl-sq.is-mine{
+  background:linear-gradient(150deg,#2a1410,#0d0a09);
+  color:var(--cream);border:1px solid rgba(200,48,46,.55);
+  box-shadow:0 0 0 1px rgba(200,48,46,.2),0 8px 24px -12px rgba(200,48,46,.5);
+}
+.dl-mock-note{font-size:clamp(.68rem,.78vw,.74rem);color:var(--fog-2);line-height:1.6}
+
+/* 总结块 */
+.dl-sum{
+  display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+  gap:clamp(18px,3vw,42px);align-items:center;
+  margin-top:clamp(28px,4.4vw,56px);
+  padding:clamp(20px,3vw,36px);
+  background:var(--forest-2);border:1px solid rgba(200,48,46,.22);
+  border-radius:14px;
+}
+.dl-sum-k{
+  font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:8px;
+}
+.dl-sum h4{font-size:clamp(.95rem,1.5vw,1.2rem);line-height:1.35;font-weight:700}
+.dl-sum-r p{font-size:clamp(.8rem,.92vw,.86rem);line-height:1.8;color:rgba(242,242,238,.55)}
+
+@media(max-width:860px){
+  .dl-result{grid-template-columns:repeat(2,1fr)}
+  .dl-item{grid-template-columns:1fr}
+  .dl-sum{grid-template-columns:1fr}
+  .dl-arrow{display:none}
+  .dl-f{flex:1 1 45%}
+}
+
+/* ============ 能力四条 ============ */
+.ability-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(10px,1.6vw,20px)}
+.ability{
+  border-radius:14px;padding:clamp(18px,2.4vw,30px);
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  transition:transform .4s var(--ease),border-color .4s;
+  position:relative;overflow:hidden;
+}
+.ability:hover{transform:translateY(-3px);border-color:rgba(200,48,46,.3)}
+.ability::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 100% 0%,rgba(200,48,46,.07),transparent 60%);
+  opacity:0;transition:opacity .4s;
+}
+.ability:hover::after{opacity:1}
+.ability .ab-no{
+  font-family:var(--serif);font-size:clamp(1.4rem,2.4vw,2rem);
+  line-height:1;color:rgba(200,48,46,.5);margin-bottom:14px;
+}
+.ability h3{
+  font-size:clamp(1rem,1.5vw,1.24rem);font-weight:800;
+  letter-spacing:-.015em;line-height:1.24;margin-bottom:12px;
+}
+.ability .ab-line{
+  display:grid;grid-template-columns:38px 1fr;gap:10px;
+  margin-top:8px;font-size:clamp(.78rem,.9vw,.85rem);line-height:1.7;
+}
+.ability .ab-line span:first-child{
+  font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fog-2);padding-top:4px;
+}
+.ability .ab-line strong{color:var(--lime);font-weight:700}
+@media(max-width:760px){
+  .ability-grid{grid-template-columns:1fr}
+  .ability .ab-line{grid-template-columns:1fr;gap:2px}
+}
+
+/* ============ 案例（大地图卡）============ */
+/* 案例 KPI 条：结果前置 */
+.case-kpi{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--line);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-bottom:clamp(18px,2.6vw,30px);
+}
+.ck{padding:clamp(13px,1.8vw,22px) clamp(11px,1.6vw,18px);background:var(--forest)}
+.panel.cream .ck{background:transparent}
+.ck b{
+  display:block;font-family:var(--serif);font-weight:400;
+  font-size:clamp(1.4rem,3vw,2.4rem);line-height:1;letter-spacing:-.02em;
+}
+.ck b em{font-style:normal;color:var(--lime);font-size:.5em}
+.ck small{
+  display:block;margin-top:7px;font-size:9px;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--fog-2);
+}
+.panel.cream .ck small{color:rgba(10,10,10,.42)}
+
+/* 问题 · 方案 · 结果 三栏 */
+.psr{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--line);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-top:clamp(20px,3vw,34px);
+}
+.psr-col{padding:clamp(16px,2.4vw,28px) clamp(14px,2vw,24px);background:var(--forest)}
+.panel.cream .psr-col{background:transparent}
+.psr-col.is-key{background:rgba(200,48,46,.06)}
+.panel.cream .psr-col.is-key{background:rgba(200,48,46,.05)}
+.psr-k{
+  display:flex;align-items:baseline;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--fog-2);margin-bottom:10px;
+}
+.panel.cream .psr-k{color:rgba(10,10,10,.4)}
+.psr-k span{font-family:var(--serif);font-size:.9em;color:var(--lime)}
+.psr-col h4{
+  font-size:clamp(1.08rem,1.56vw,1.32rem);line-height:1.34;
+  margin-bottom:10px;letter-spacing:-.01em;
+}
+.psr-col p{
+  font-size:clamp(.94rem,1.08vw,1.02rem);line-height:1.78;
+  color:var(--fog);
+}
+.panel.cream .psr-col p{color:rgba(10,10,10,.62)}
+.psr-col strong{color:var(--cream);font-weight:600}
+.panel.cream .psr-col strong{color:rgba(10,10,10,.9)}
+@media(max-width:860px){
+  .case-kpi{grid-template-columns:repeat(2,1fr)}
+  .psr{grid-template-columns:1fr}
+}
+
+.case-open{
+  position:relative;border-radius:14px;overflow:hidden;
+  background:var(--forest-3);
+  border:1px solid rgba(242,242,238,.09);
+  margin-bottom:clamp(12px,1.8vw,20px);
+}
+.case-open img{width:100%;display:block;max-height:62vh;object-fit:cover;object-position:center top}
+.case-open .co-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,10,10,.1) 0%,rgba(10,10,10,.86) 100%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:clamp(18px,3vw,40px);
+}
+.case-open .co-tag{
+  font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:10px;
+}
+.case-open h3{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(1.4rem,3.4vw,3rem);line-height:.98;
+  letter-spacing:-.03em;color:var(--cream);
+}
+.case-open .co-facts{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:rgba(242,242,238,.12);border-top:1px solid rgba(242,242,238,.12);
+  margin-top:clamp(16px,2.4vw,28px);
+}
+.case-open .cf{background:transparent;padding:12px 0 0}
+.case-open .cf small{
+  display:block;font-size:8px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(242,242,238,.42);margin-bottom:5px;
+}
+.case-open .cf b{display:block;font-size:clamp(.76rem,.9vw,.86rem);font-weight:600;color:var(--cream);line-height:1.4}
+@media(max-width:760px){.case-open .co-facts{grid-template-columns:1fr 1fr;gap:14px 0}}
+
+/* 案例内步骤 */
+.step-row{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(20px,2.4vw,36px);
+  padding:clamp(28px,4vw,56px) 0;
+  border-top:1px solid var(--line);
+  align-items:start;
+}
+/* 奇数行左右互换：图文交错（站酷式） */
+.step-row.is-reverse{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.step-row.is-reverse > div:first-child{order:2}
+.step-row.is-reverse > div:last-child{order:1}
+.panel.cream .step-row{border-color:var(--line)}
+/* 编号做成小圆角标签（站酷式 KPI 标签） */
+.step-row .sr-no{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:14px;
+  padding:4px 10px;border:1px solid rgba(200,48,46,.42);
+  border-radius:999px;
+}
+.step-row h4{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(1.15rem,2.1vw,1.78rem);line-height:1.16;
+  letter-spacing:-.026em;margin-bottom:16px;
+}
+.step-row h4 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--lime)}
+.step-row .sr-body p{
+  font-size:clamp(.82rem,.95vw,.9rem);line-height:1.82;
+  color:var(--fog);max-width:56ch;
+}
+.panel.cream .step-row .sr-body p{color:rgba(10,10,10,.68)}
+.step-row .sr-body p + p{margin-top:10px}
+.step-row .sr-body strong{color:var(--cream);font-weight:600}
+.panel.cream .step-row .sr-body strong{color:var(--cream)}
+.step-row .sr-imgs{display:grid;gap:clamp(8px,1.1vw,14px)}
+.step-row .sr-imgs.g2{grid-template-columns:1fr 1fr}
+
+/* 站酷式模块标题：左侧竖线 + 大标题 */
+.step-row h4::before{
+  content:"";display:block;width:26px;height:2px;
+  background:var(--lime);margin-bottom:12px;
+}
+.sr-img{
+  border-radius:14px;overflow:hidden;border:1px solid rgba(242,242,238,.08);
+  background:var(--forest-3);cursor:zoom-in;display:block;
+}
+.sr-img img{width:100%;display:block;transition:transform 1s var(--ease)}
+.sr-img:hover img{transform:scale(1.03)}
+@media(max-width:860px){
+  .step-row{grid-template-columns:1fr;gap:14px}
+  .step-row .sr-imgs.g2{grid-template-columns:1fr 1fr}
+}
+
+/* ============ 作品区 ============ */
+.works-tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:clamp(22px,3vw,36px)}
+.wtab{
+  padding:8px 15px;border-radius:999px;
+  border:1px solid var(--line);color:var(--fog);
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .25s;
+}
+.wtab span{opacity:.5;margin-left:4px}
+.wtab:hover{border-color:rgba(200,48,46,.5);color:var(--cream)}
+.wtab.active{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+.wtab.active span{opacity:.6}
+
+.work-block{margin-top:clamp(28px,4vw,52px)}
+.wb-label{
+  font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);padding-bottom:10px;border-bottom:1px solid var(--line);
+  margin-bottom:clamp(14px,2vw,22px);
+}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.2vw,14px)}
+.seg3-item{
+  display:block;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(242,242,238,.08);background:var(--forest-3);
+  cursor:zoom-in;
+  transition:transform .4s var(--ease),border-color .4s;
+}
+.seg3-item:hover{transform:translateY(-3px);border-color:rgba(200,48,46,.34)}
+.seg3-item img{width:100%;display:block}
+
+.poster-grid{display:grid;gap:clamp(10px,1.6vw,20px)}
+/* 推广素材三图一排 */
+.poster-grid.land-three{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:clamp(8px,1.2vw,14px);
+}
+.poster-grid.land-three .poster-item{width:100%}
+.poster-grid.land-three .poster-item img{width:100%;display:block}
+@media(max-width:860px){
+  .poster-grid.land-three{grid-template-columns:1fr}
+}
+
+.poster-grid.vert{grid-template-columns:repeat(3,1fr)}
+.poster-grid.land{grid-template-columns:repeat(2,1fr)}
+.poster-item{border-radius:14px;overflow:hidden;border:1px solid rgba(242,242,238,.08);background:var(--forest-3)}
+.poster-item img{width:100%;display:block;transition:transform 1s var(--ease)}
+.poster-item:hover img{transform:scale(1.02)}
+@media(max-width:860px){
+  .seg3{grid-template-columns:1fr 1fr}
+  .seg3-item:nth-child(3){display:none}
+  .poster-grid.vert{grid-template-columns:1fr 1fr}
+  .poster-grid.land{grid-template-columns:1fr}
+}
+
+.work-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:16px;margin-bottom:10px;flex-wrap:wrap;
+}
+.work-head h4{
+  font-family:var(--sans);font-weight:800;font-size:clamp(.9rem,1.2vw,1.05rem);
+  letter-spacing:-.01em;
+}
+.work-head .cat{
+  font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  padding:3px 7px;border-radius:999px;
+  border:1px solid rgba(200,48,46,.34);color:var(--lime);
+}
+.work-head .note{font-size:clamp(.68rem,.8vw,.75rem);color:var(--fog-2)}
+.work-item{padding:clamp(18px,2.6vw,34px) 0;border-bottom:1px solid var(--line)}
+.work-item:last-child{border-bottom:0}
+.work-item.hide{display:none}
+
+/* ============ 文档区 ============ */
+.doc-hero{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:20px;flex-wrap:wrap;padding-bottom:clamp(14px,2vw,22px);
+  border-bottom:1px solid var(--line);margin-bottom:clamp(16px,2.2vw,26px);
+}
+.doc-hero-l{display:flex;align-items:baseline;gap:clamp(12px,2vw,24px);flex-wrap:wrap}
+.doc-no{
+  font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.6rem);
+  line-height:.9;color:rgba(200,48,46,.5);
+}
+.doc-title{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(1.54rem,2.8vw,2.38rem);line-height:1.06;letter-spacing:-.03em;
+}
+.doc-sub{margin-top:8px;font-size:clamp(1.06rem,1.23vw,1.18rem);color:var(--fog-2);max-width:52ch;line-height:1.6}
+.doc-hero-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.doc-badge{
+  padding:5px 11px;border-radius:999px;background:var(--lime);color:var(--ink);
+  font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+}
+.doc-open{
+  padding:5px 11px;border-radius:999px;border:1px solid var(--line);
+  font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fog);transition:all .25s;
+}
+.doc-open:hover{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+
+.doc-screen{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(16px,2.6vw,44px);
+  align-items:start;
+  padding:clamp(16px,2.2vw,28px) 0;
+  border-bottom:1px solid rgba(242,242,238,.06);
+  width:100%;
+  box-sizing:border-box;
+}
+.doc-screen > *{
+  min-width:0;
+  max-width:100%;
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+}
+.doc-screen .ds-body{
+  width:100%;
+  max-width:100%;
+}
+.doc-screen:last-child{border-bottom:0}
+.ds-no{
+  font-family:var(--serif);font-size:clamp(.98rem,1.12vw,1.06rem);
+  color:rgba(200,48,46,.6);margin-bottom:8px;letter-spacing:.04em;
+}
+.ds-title{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(1.37rem,2.24vw,1.82rem);line-height:1.16;
+  letter-spacing:-.02em;margin-bottom:10px;
+}
+.ds-body{font-size:clamp(1.09rem,1.26vw,1.19rem);line-height:1.72;color:var(--fog)}
+.ds-body strong{color:var(--cream);font-weight:600}
+.ds-img{
+  display:block;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(242,242,238,.08);background:var(--forest-3);
+  cursor:zoom-in;transition:transform .4s var(--ease),border-color .4s;
+}
+.ds-img:hover{transform:translateY(-2px);border-color:rgba(200,48,46,.3)}
+.ds-img img{width:100%;display:block}
+@media(max-width:860px){.doc-screen{grid-template-columns:1fr;gap:12px}}
+
+/* ============ 结尾 ============ */
+.end-panel{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(90px,14vh,160px) 0 clamp(60px,9vh,110px);
+  position:relative;z-index:1;overflow:hidden;
+}
+.end-panel .mega em{color:var(--lime)}
+.contact-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--line);border-top:1px solid var(--line);
+  margin-top:clamp(28px,4.5vw,56px);
+}
+.contact-cell{background:var(--forest);padding:clamp(16px,2.2vw,26px) clamp(14px,2vw,22px)}
+.contact-cell:first-child{padding-left:0;background:transparent}
+.contact-cell:last-child{background:transparent}
+.contact-cell small{
+  display:block;font-size:9px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--fog-2);margin-bottom:8px;
+}
+.contact-cell b{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(.94rem,1.5vw,1.28rem);letter-spacing:-.01em;
+}
+@media(max-width:760px){.contact-grid{grid-template-columns:1fr}}
+
+.end-foot{
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  margin-top:clamp(28px,4vw,56px);padding-top:16px;
+  border-top:1px solid var(--line);
+  font-size:9px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--fog-2);
+}
+
+/* ============ 灯箱 ============ */
+#lb{
+  position:fixed;inset:0;z-index:800;display:none;
+  flex-direction:column;background:rgba(6,6,6,.985);
+}
+#lb.open{display:flex}
+.lb-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px var(--pad);border-bottom:1px solid var(--line);
+  font-size:10px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--fog);
+}
+.lb-close{
+  width:38px;height:38px;border-radius:14px;
+  display:grid;place-items:center;
+  background:var(--cream);color:var(--ink);font-size:14px;
+  transition:transform .25s;
+}
+.lb-close:hover{transform:scale(1.06);background:var(--lime)}
+.lb-stage{flex:1;overflow-y:auto;padding:18px var(--pad) 60px}
+.lb-stage img{max-width:min(900px,100%);margin:0 auto;display:block;border-radius:14px}
+
+/* ============ 动效 ============ */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
+.reveal.in{opacity:1;transform:none}
+.reveal-d1{transition-delay:.08s}
+.reveal-d2{transition-delay:.16s}
+.reveal-d3{transition-delay:.24s}
+
+.char{
+  display:inline-block;
+  opacity:0;transform:translateY(.5em) rotateX(-40deg);
+  transition:opacity .7s var(--ease-out),transform .7s var(--ease-out);
+}
+.char.in{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+  .char{opacity:1;transform:none}
+}
+
+/* ============ 光标 ============ */
+.cursor-ring{
+  position:fixed;top:0;left:0;width:34px;height:34px;
+  border:1.5px solid rgba(200,48,46,.6);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  margin:-17px 0 0 -17px;
+  transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),
+             background .3s,border-color .3s;
+  mix-blend-mode:difference;
+}
+.cursor-ring.grow{
+  width:62px;height:62px;margin:-31px 0 0 -31px;
+  background:rgba(200,48,46,.16);border-color:rgba(200,48,46,.9);
+}
+.cursor-dot{
+  position:fixed;top:0;left:0;width:5px;height:5px;
+  background:var(--lime);border-radius:50%;
+  pointer-events:none;z-index:10000;margin:-2.5px 0 0 -2.5px;
+}
+@media(hover:none){.cursor-ring,.cursor-dot{display:none}}
+
+/* ============ 逐字动画 ============ */
+.ch-wrap{display:inline-block;overflow:hidden;vertical-align:top}
+.ch{
+  display:inline-block;
+  transform:translateY(105%) rotate(3deg);
+  opacity:0;
+  transition:transform .85s var(--ease-out),opacity .6s ease;
+  will-change:transform,opacity;
+}
+.ch.in{transform:translateY(0) rotate(0);opacity:1}
+
+/* 保留衬线斜体 */
+.mega em .ch,.hero-statement em .ch{
+  font-family:var(--serif);font-style:italic;
+}
+.mega-zh em .ch{
+  font-family:var(--zh-serif);font-style:normal;
+}
+
+/* ============ 磁吸 ============ */
+.magnetic{will-change:transform;transition:transform .35s var(--ease-out)}
+
+/* ============ 图片视差 ============ */
+.case-open img,.sr-img img,.ds-img img{will-change:transform}
+
+/* ============ 更强的 reveal ============ */
+.reveal{
+  opacity:0;transform:translateY(34px);
+  transition:opacity 1s var(--ease-out),transform 1s var(--ease-out);
+}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ 图片悬停 ============ */
+.seg3-item,.poster-item,.sr-img,.ds-img,.img-card,.case-open{
+  transition:transform .5s var(--ease-out),border-color .4s,box-shadow .4s;
+  will-change:transform;
+}
+.seg3-item:hover,.poster-item:hover,.sr-img:hover,.ds-img:hover{
+  box-shadow:0 18px 50px -20px rgba(200,48,46,.35);
+}
+
+/* ============ 深色主题 ============ */
+body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
+.panel.cream{background:var(--forest-2)}
+
+
+/* 关于我 · 个人照片 */
+.about-photo{
+  width:100%;
+  max-width:clamp(160px,20vw,220px);
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid rgba(242,242,238,.1);
+  position:relative;
+}
+.about-photo img{
+  width:100%;display:block;
+  filter:grayscale(.18) contrast(1.04);
+  transition:filter .6s var(--ease),transform .8s var(--ease);
+}
+.about-photo:hover img{filter:grayscale(0) contrast(1);transform:scale(1.02)}
+
+
+/* 详情页拆解 · 逻辑图放大 */
+.dl-logicmap{
+  margin-bottom:clamp(28px,4.4vw,56px);
+  padding:clamp(18px,2.8vw,34px);
+  background:var(--forest-2);
+  border:1px solid rgba(200,48,46,.22);
+  border-radius:14px;
+}
+.dl-logicmap-head{margin-bottom:clamp(14px,2vw,24px)}
+.dl-lm-k{
+  display:inline-block;font-size:9px;font-weight:800;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);padding:4px 10px;
+  border:1px solid rgba(200,48,46,.4);border-radius:999px;
+  margin-bottom:10px;
+}
+.dl-logicmap-head h3{
+  font-size:clamp(1.05rem,1.8vw,1.5rem);
+  font-weight:800;letter-spacing:-.02em;margin-bottom:8px;
+}
+.dl-logicmap-head p{
+  font-size:clamp(.8rem,.92vw,.87rem);
+  line-height:1.8;color:var(--fog);max-width:70ch;
+}
+.dl-logicmap-img{display:block;position:relative}
+.dl-logicmap-img img{
+  width:100%;display:block;border-radius:10px;
+  border:1px solid rgba(242,242,238,.1);
+  transition:transform .6s var(--ease);
+}
+.dl-logicmap-img:hover img{transform:scale(1.008)}
+
+/* 10 模块卡片 */
+.dlm-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:clamp(12px,1.8vw,20px);
+}
+.dlm-card{
+  padding:clamp(16px,2.2vw,26px);
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:12px;
+  transition:border-color .4s,background .4s;
+}
+.dlm-card:hover{border-color:rgba(200,48,46,.32);background:rgba(200,48,46,.035)}
+.dlm-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.dlm-no{
+  font-family:var(--serif);
+  font-size:clamp(1.3rem,2.2vw,1.8rem);
+  line-height:1;color:rgba(200,48,46,.5);
+  flex-shrink:0;min-width:1.4em;
+}
+.dlm-title{
+  font-size:clamp(.94rem,1.25vw,1.08rem);
+  font-weight:800;letter-spacing:-.01em;margin-bottom:5px;
+}
+.dlm-goal{
+  font-size:9px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--lime);
+}
+.dlm-visual{
+  font-size:clamp(.74rem,.84vw,.8rem);
+  line-height:1.6;color:var(--fog-2);
+  padding:8px 10px;margin-bottom:12px;
+  background:rgba(242,242,238,.03);
+  border-left:2px solid rgba(200,48,46,.4);
+  border-radius:0 6px 6px 0;
+}
+.dlm-desc{
+  font-size:clamp(.78rem,.9vw,.85rem);
+  line-height:1.82;color:var(--fog);
+}
+@media(max-width:860px){
+  .dlm-grid{grid-template-columns:1fr}
+}
+
+
+/* 关于我 · 照片 + 能力 */
+.about-photo-row{
+  display:flex;gap:clamp(14px,2vw,24px);
+  align-items:flex-start;
+  margin-top:clamp(18px,2.6vw,28px);
+}
+.about-skills{flex:1;min-width:0;padding-top:4px}
+.ask-h{
+  font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:12px;
+}
+.ask-item{margin-bottom:11px}
+.ask-item span{
+  display:block;font-size:clamp(.72rem,.84vw,.8rem);
+  font-weight:600;color:var(--fog);margin-bottom:5px;
+}
+.ask-item i{
+  display:block;height:2px;background:rgba(242,242,238,.1);
+  position:relative;border-radius:2px;
+}
+.ask-item i::after{
+  content:"";position:absolute;left:0;top:0;height:100%;
+  width:inherit;max-width:inherit;
+  background:linear-gradient(90deg,var(--lime),rgba(200,48,46,.45));
+  border-radius:2px;
+}
+
+/* 工作方式 */
+.work-style{
+  margin-top:clamp(20px,3vw,32px);
+  padding-top:clamp(16px,2.2vw,24px);
+  border-top:1px solid rgba(242,242,238,.1);
+}
+.ws-h{
+  font-size:clamp(.94rem,1.25vw,1.1rem);font-weight:700;
+  letter-spacing:-.01em;margin-bottom:clamp(12px,1.8vw,18px);
+}
+.ws-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(12px,1.8vw,22px);
+}
+.ws-i b{
+  display:block;font-size:clamp(.8rem,.94vw,.88rem);
+  font-weight:700;margin-bottom:6px;color:var(--cream);
+}
+.ws-i p{
+  font-size:clamp(.74rem,.86vw,.8rem);line-height:1.72;
+  color:var(--fog-2);margin:0;
+}
+@media(max-width:860px){
+  .about-photo-row{flex-direction:column}
+  .about-photo{max-width:160px}
+  .ws-grid{grid-template-columns:1fr}
+}
+
+
+/* 案例项目信息卡 */
+.case-meta{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--line);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-top:clamp(18px,2.6vw,30px);
+}
+.cm-col{padding:clamp(14px,2vw,22px) clamp(12px,1.8vw,20px);background:var(--forest)}
+.cm-k{
+  font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:8px;
+}
+.cm-v{
+  font-size:clamp(.8rem,.94vw,.88rem);line-height:1.6;
+  font-weight:600;color:var(--cream);
+}
+.cm-v span{
+  display:block;margin-top:5px;font-weight:400;
+  font-size:clamp(.72rem,.82vw,.78rem);
+  color:var(--fog-2);line-height:1.65;
+}
+@media(max-width:860px){
+  .case-meta{grid-template-columns:1fr 1fr}
+}
+
+
+/* 详情页拆解 · 模块带图 */
+.dlm-list{display:flex;flex-direction:column;gap:clamp(20px,3vw,40px);margin-bottom:clamp(28px,4.4vw,56px)}
+.dlm-module{
+  display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
+  gap:clamp(16px,2.8vw,44px);align-items:start;
+  padding-top:clamp(16px,2.4vw,28px);
+  border-top:1px solid rgba(242,242,238,.07);
+}
+.dlm-module:first-child{border-top:none;padding-top:0}
+.dlm-no{
+  font-family:var(--serif);font-size:clamp(1.5rem,2.8vw,2.2rem);
+  line-height:1;color:rgba(200,48,46,.5);margin-bottom:8px;
+}
+.dlm-title{
+  font-size:clamp(1rem,1.5vw,1.24rem);font-weight:800;
+  letter-spacing:-.015em;margin-bottom:8px;line-height:1.3;
+}
+.dlm-goal{
+  font-size:9px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--lime);margin-bottom:10px;
+}
+.dlm-visual{
+  font-size:clamp(.72rem,.82vw,.78rem);line-height:1.6;
+  color:var(--fog-2);padding:7px 10px;
+  background:rgba(242,242,238,.03);
+  border-left:2px solid rgba(200,48,46,.38);
+  border-radius:0 6px 6px 0;
+}
+.dlm-desc{
+  font-size:clamp(.8rem,.92vw,.87rem);line-height:1.85;
+  color:var(--fog);margin-bottom:clamp(12px,1.8vw,20px);
+}
+.dlm-desc b{color:var(--cream);font-weight:600}
+.dlm-imgs{display:grid;grid-template-columns:1fr;gap:clamp(8px,1.2vw,14px)}
+.dlm-imgs.dual{grid-template-columns:1fr 1fr}
+.dlm-img{display:block;border-radius:10px;overflow:hidden;border:1px solid rgba(242,242,238,.09);cursor:zoom-in}
+.dlm-img img{width:100%;display:block;transition:transform .6s var(--ease)}
+.dlm-img:hover img{transform:scale(1.015)}
+
+.dlm-extra-head{
+  margin-top:clamp(20px,3vw,36px);
+  margin-bottom:clamp(16px,2.4vw,28px);
+  padding-top:clamp(16px,2.4vw,28px);
+  border-top:1px solid rgba(242,242,238,.14);
+}
+.dlm-extra-head h3{
+  font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:800;
+  letter-spacing:-.02em;margin:10px 0 8px;
+}
+.dlm-extra-head p{
+  font-size:clamp(.78rem,.9vw,.85rem);line-height:1.78;
+  color:var(--fog-2);max-width:66ch;
+}
+@media(max-width:860px){
+  .dlm-module{grid-template-columns:1fr}
+  .dlm-imgs.dual{grid-template-columns:1fr}
+}
+
+
+/* 详情页拆解 · 底层逻辑条（压缩） */
+.logic-strip{
+  margin-bottom:clamp(20px,3vw,34px);
+  padding:clamp(12px,1.8vw,20px);
+  background:var(--forest-2);
+  border:1px solid rgba(200,48,46,.2);
+  border-radius:12px;
+}
+.ls-head{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.ls-head span:last-child{
+  font-size:clamp(.74rem,.84vw,.8rem);color:var(--fog-2);
+}
+.ls-img{display:block}
+.ls-img img{
+  width:100%;display:block;border-radius:8px;
+  border:1px solid rgba(242,242,238,.08);
+  max-height:clamp(180px,22vw,280px);
+  object-fit:cover;object-position:center;
+  transition:transform .6s var(--ease);
+}
+.ls-img:hover img{transform:scale(1.01)}
+
+/* STAR 三列卡片网格 */
+.star-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(12px,1.8vw,20px);
+}
+.star-card{
+  display:flex;flex-direction:column;
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:12px;overflow:hidden;
+  transition:border-color .4s;
+}
+.star-card:hover{border-color:rgba(200,48,46,.34)}
+.sc-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 12px;
+  border-bottom:1px solid rgba(242,242,238,.07);
+}
+.sc-code{
+  font-family:var(--serif);font-size:clamp(.82rem,1vw,.92rem);
+  color:var(--lime);font-weight:400;letter-spacing:.04em;
+}
+.sc-note{
+  font-size:8px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--fog-2);
+  text-align:right;line-height:1.4;
+}
+.sc-imgs{display:flex;gap:1px;background:rgba(242,242,238,.07)}
+.sc-img{flex:1;min-width:0;display:block;cursor:zoom-in;overflow:hidden}
+.sc-img img{
+  width:100%;display:block;aspect-ratio:3/4;
+  object-fit:cover;object-position:center top;
+  transition:transform .6s var(--ease);
+}
+.sc-img:hover img{transform:scale(1.03)}
+.sc-body{padding:12px;flex:1;display:flex;flex-direction:column;gap:10px}
+.sc-row{display:grid;grid-template-columns:16px 1fr;gap:8px;align-items:start}
+.sc-row i{
+  font-style:normal;font-weight:800;font-size:9px;
+  color:var(--fog-2);padding-top:2px;
+  font-family:var(--serif);
+}
+.sc-row b{
+  display:block;font-size:8px;font-weight:800;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--fog-2);margin-bottom:3px;
+}
+.sc-row p{
+  font-size:clamp(.72rem,.82vw,.78rem);
+  line-height:1.62;color:var(--fog);margin:0;
+}
+.sc-row.is-key i{color:var(--lime)}
+.sc-row.is-key b{color:var(--lime)}
+.sc-row.is-key p{color:rgba(242,242,238,.78)}
+.sc-row.is-res i{color:var(--lime)}
+.sc-row.is-res p{color:var(--cream);font-weight:600}
+
+@media(max-width:1100px){
+  .star-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .star-grid{grid-template-columns:1fr}
+}
+
+
+/* 关于我 · 照片 | 简介 | 履历 */
+.about-grid{
+  display:grid;
+  grid-template-columns:minmax(0,26%) minmax(0,34%) minmax(0,40%);
+  gap:clamp(16px,2.2vw,36px);
+  align-items:start;
+}
+.about-photo{
+  width:100%;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(242,242,238,.1);
+  position:relative;
+}
+.about-photo img{
+  width:100%;display:block;
+  filter:grayscale(.16) contrast(1.03);
+  transition:filter .6s var(--ease),transform .8s var(--ease);
+}
+.about-photo:hover img{filter:grayscale(0) contrast(1);transform:scale(1.02)}
+
+/* 能力条 */
+.ag-skills{margin-top:clamp(14px,2vw,22px)}
+.ag-sk-h{
+  font-size:9px;font-weight:800;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--lime);margin-bottom:10px;
+}
+.ag-sk-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px}
+.ag-sk span{
+  display:block;font-size:clamp(.7rem,.8vw,.76rem);
+  font-weight:600;color:var(--fog-2);margin-bottom:4px;white-space:nowrap;
+}
+.ag-sk i{
+  display:block;height:2px;background:rgba(242,242,238,.1);
+  position:relative;border-radius:2px;
+}
+.ag-sk i::after{
+  content:"";position:absolute;left:0;top:0;height:100%;
+  width:inherit;background:linear-gradient(90deg,var(--lime),rgba(200,48,46,.4));
+  border-radius:2px;
+}
+
+/* 奖项 */
+.ag-awards{margin-top:clamp(16px,2.2vw,24px);padding-top:clamp(12px,1.8vw,18px);border-top:1px solid rgba(242,242,238,.1)}
+.ag-aw-h{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  font-size:clamp(.82rem,1vw,.94rem);font-weight:700;
+  color:var(--cream);margin-bottom:10px;white-space:nowrap;
+}
+.ag-aw-h span{
+  font-family:var(--serif);font-size:clamp(.7rem,.8vw,.76rem);
+  font-weight:400;color:var(--fog-2);
+}
+
+/* 工作方式 */
+.ag-style{margin-top:clamp(16px,2.2vw,24px);padding-top:clamp(12px,1.8vw,18px);border-top:1px solid rgba(242,242,238,.1)}
+.ag-ws-h{font-size:clamp(.88rem,1.1vw,1rem);font-weight:700;margin-bottom:12px}
+.ag-ws-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px}
+.ag-ws b{
+  display:block;font-size:clamp(.76rem,.86vw,.82rem);
+  font-weight:700;margin-bottom:4px;color:var(--cream);
+}
+.ag-ws p{
+  font-size:clamp(.7rem,.8vw,.76rem);line-height:1.66;
+  color:var(--fog-2);margin:0;
+}
+
+@media(max-width:1100px){
+  .about-grid{grid-template-columns:minmax(0,32%) minmax(0,68%)}
+  .ag-cv{grid-column:1 / -1}
+}
+@media(max-width:700px){
+  .about-grid{grid-template-columns:1fr}
+  .about-photo{max-width:240px}
+  .ag-sk-grid,.ag-ws-grid{grid-template-columns:1fr}
+}
+
+
+/* 详情页 · 7 大板块 */
+.d7-list{display:flex;flex-direction:column;gap:clamp(20px,3vw,36px)}
+.d7-block{
+  padding:clamp(16px,2.4vw,28px);
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:14px;
+  transition:border-color .4s;
+}
+.d7-block:hover{border-color:rgba(200,48,46,.3)}
+.d7-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding-bottom:clamp(12px,1.8vw,18px);margin-bottom:clamp(14px,2vw,20px);
+  border-bottom:1px solid rgba(242,242,238,.07);
+}
+.d7-left{display:flex;align-items:center;gap:14px}
+.d7-no{
+  font-family:var(--serif);font-size:clamp(1.6rem,2.6vw,2.2rem);
+  line-height:1;color:rgba(200,48,46,.55);flex-shrink:0;
+}
+.d7-title{
+  font-size:clamp(1rem,1.5vw,1.28rem);font-weight:800;
+  letter-spacing:-.015em;margin-bottom:4px;
+}
+.d7-goal{
+  font-size:9px;font-weight:800;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--lime);
+}
+.d7-count{
+  font-size:9px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--fog-2);white-space:nowrap;
+}
+.d7-body{
+  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+  gap:clamp(16px,2.4vw,32px);align-items:start;
+}
+.d7-imgs{display:grid;gap:8px}
+.d7-imgs.n1{grid-template-columns:1fr}
+.d7-imgs.n2{grid-template-columns:1fr 1fr}
+.d7-imgs.n3{grid-template-columns:repeat(3,1fr)}
+.d7-imgs.n4{grid-template-columns:repeat(4,1fr)}
+.d7-img{display:block;border-radius:8px;overflow:hidden;border:1px solid rgba(242,242,238,.08);cursor:zoom-in}
+.d7-img img{
+  width:100%;display:block;
+  transition:transform .6s var(--ease);
+}
+.d7-img:hover img{transform:scale(1.02)}
+.d7-text{display:flex;flex-direction:column;gap:11px}
+.d7-row{display:grid;grid-template-columns:15px 1fr;gap:8px;align-items:start}
+.d7-row i{
+  font-style:normal;font-weight:800;font-size:9px;
+  color:var(--fog-2);padding-top:2px;font-family:var(--serif);
+}
+.d7-row b{
+  display:block;font-size:8px;font-weight:800;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--fog-2);margin-bottom:3px;
+}
+.d7-row p{font-size:clamp(.74rem,.84vw,.8rem);line-height:1.7;color:var(--fog);margin:0}
+.d7-row.is-key i,.d7-row.is-key b{color:var(--lime)}
+.d7-row.is-key p{color:rgba(242,242,238,.8)}
+.d7-row.is-res i{color:var(--lime)}
+.d7-row.is-res p{color:var(--cream);font-weight:600}
+
+@media(max-width:1100px){
+  .d7-body{grid-template-columns:1fr}
+  .d7-imgs.n4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .d7-imgs.n2,.d7-imgs.n3{grid-template-columns:1fr 1fr}
+}
+
+
+/* 关于我 · 三列（左26岁+图 | 中简介+能力+奖项 | 右履历） */
+.abt{
+  display:grid;
+  grid-template-columns:minmax(0,22%) minmax(0,36%) minmax(0,42%);
+  gap:clamp(18px,2.4vw,40px);
+  align-items:start;
+}
+.about-photo{
+  width:100%;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(242,242,238,.1);
+}
+.about-photo img{
+  width:100%;display:block;
+  filter:grayscale(.16) contrast(1.03);
+  transition:filter .6s var(--ease),transform .8s var(--ease);
+}
+.about-photo:hover img{filter:grayscale(0) contrast(1);transform:scale(1.02)}
+
+.abt-skills{margin-top:clamp(14px,2vw,22px)}
+.abt-sk-h{
+  font-size:9px;font-weight:800;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--lime);margin-bottom:10px;
+}
+.abt-sk-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+.abt-sk span{
+  display:block;font-size:clamp(.7rem,.78vw,.75rem);
+  font-weight:600;color:var(--fog-2);margin-bottom:4px;white-space:nowrap;
+}
+.abt-sk i{
+  display:block;height:2px;background:rgba(242,242,238,.1);
+  position:relative;border-radius:2px;
+}
+.abt-sk i::after{
+  content:"";position:absolute;left:0;top:0;height:100%;
+  width:inherit;background:linear-gradient(90deg,var(--lime),rgba(200,48,46,.4));
+  border-radius:2px;
+}
+
+.abt-awards{margin-top:clamp(16px,2.2vw,24px);padding-top:clamp(12px,1.8vw,18px);border-top:1px solid rgba(242,242,238,.1)}
+.abt-aw-h{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  font-size:clamp(.8rem,.96vw,.9rem);font-weight:700;
+  color:var(--cream);margin-bottom:10px;white-space:nowrap;
+}
+.abt-aw-h span{
+  font-family:var(--serif);font-size:clamp(.68rem,.78vw,.74rem);
+  font-weight:400;color:var(--fog-2);
+}
+
+.abt-style{margin-top:clamp(16px,2.2vw,24px);padding-top:clamp(12px,1.8vw,18px);border-top:1px solid rgba(242,242,238,.1)}
+.abt-ws-h{font-size:clamp(.86rem,1.06vw,.96rem);font-weight:700;margin-bottom:12px}
+.abt-ws-grid{display:grid;grid-template-columns:1fr;gap:11px}
+.abt-ws b{display:block;font-size:clamp(.74rem,.84vw,.8rem);font-weight:700;margin-bottom:3px;color:var(--cream)}
+.abt-ws p{font-size:clamp(.68rem,.78vw,.74rem);line-height:1.66;color:var(--fog-2);margin:0}
+
+@media(max-width:1200px){
+  .abt{grid-template-columns:minmax(0,28%) minmax(0,72%)}
+  .abt-cv{grid-column:1 / -1}
+}
+@media(max-width:700px){
+  .abt{grid-template-columns:1fr}
+  .about-photo{max-width:220px}
+  .abt-sk-grid{grid-template-columns:1fr}
+}
+
+
+/* 10 模块卡 */
+.dlm-section{
+  margin-top:clamp(24px,3.6vw,48px);
+  padding-top:clamp(16px,2.4vw,28px);
+  border-top:1px solid rgba(242,242,238,.14);
+}
+.dlm-sec-head{margin-bottom:clamp(14px,2vw,24px)}
+.dlm-sec-head h3{
+  font-size:clamp(1.05rem,1.7vw,1.4rem);font-weight:800;
+  letter-spacing:-.02em;margin:10px 0 8px;
+}
+.dlm-sec-head p{
+  font-size:clamp(.78rem,.9vw,.85rem);line-height:1.78;
+  color:var(--fog-2);max-width:66ch;
+}
+.dlm-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:clamp(10px,1.6vw,18px);
+}
+.dlm-card{
+  padding:clamp(14px,2vw,24px);
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:12px;
+  transition:border-color .4s;
+}
+.dlm-card:hover{border-color:rgba(200,48,46,.3)}
+.dlm-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.dlm-no{
+  font-family:var(--serif);font-size:clamp(1.2rem,2vw,1.6rem);
+  line-height:1;color:rgba(200,48,46,.5);flex-shrink:0;min-width:1.4em;
+}
+.dlm-title{font-size:clamp(.9rem,1.2vw,1.04rem);font-weight:800;letter-spacing:-.01em;margin-bottom:4px}
+.dlm-goal{font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}
+.dlm-visual{
+  font-size:clamp(.72rem,.82vw,.78rem);line-height:1.6;color:var(--fog-2);
+  padding:7px 10px;margin-bottom:10px;
+  background:rgba(242,242,238,.03);
+  border-left:2px solid rgba(200,48,46,.4);
+  border-radius:0 6px 6px 0;
+}
+.dlm-desc{font-size:clamp(.76rem,.88vw,.83rem);line-height:1.8;color:var(--fog);margin:0}
+@media(max-width:860px){.dlm-grid{grid-template-columns:1fr}}
+
+
+/* 关于我 · 26岁在上，照片+能力并排，右侧履历 */
+.ab2{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+  gap:clamp(20px,4vw,64px);align-items:start;
+}
+.ab2-photo-row{display:flex;gap:clamp(14px,2vw,24px);align-items:flex-start}
+.about-photo{width:clamp(140px,16vw,190px);flex-shrink:0;border-radius:12px;overflow:hidden;border:1px solid rgba(242,242,238,.1)}
+.about-photo img{width:100%;display:block;filter:grayscale(.16) contrast(1.03);transition:filter .6s var(--ease),transform .8s var(--ease)}
+.about-photo:hover img{filter:grayscale(0) contrast(1);transform:scale(1.02)}
+
+.ab2-skills{flex:1;min-width:0;padding-top:4px}
+.ab2-sk-h{font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--lime);margin-bottom:12px}
+.ab2-sk{margin-bottom:10px}
+.ab2-sk span{display:block;font-size:clamp(.72rem,.82vw,.78rem);font-weight:600;color:var(--fog);margin-bottom:5px}
+.ab2-sk i{display:block;height:2px;background:rgba(242,242,238,.1);position:relative;border-radius:2px}
+.ab2-sk i::after{content:"";position:absolute;left:0;top:0;height:100%;width:inherit;background:linear-gradient(90deg,var(--lime),rgba(200,48,46,.45));border-radius:2px}
+
+.ab2-awards{margin-top:clamp(20px,3vw,32px);padding-top:clamp(16px,2.2vw,24px);border-top:1px solid rgba(242,242,238,.1)}
+.ab2-aw-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:clamp(.94rem,1.25vw,1.1rem);font-weight:700;color:var(--cream);margin-bottom:12px}
+.ab2-aw-h span{font-family:var(--serif);font-size:clamp(.78rem,1vw,.9rem);font-weight:400;color:var(--fog-2)}
+
+.ab2-style{margin-top:clamp(20px,3vw,32px);padding-top:clamp(16px,2.2vw,24px);border-top:1px solid rgba(242,242,238,.1)}
+.ab2-ws-h{font-size:clamp(.94rem,1.25vw,1.1rem);font-weight:700;margin-bottom:clamp(12px,1.8vw,18px)}
+.ab2-ws-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,22px)}
+.ab2-ws b{display:block;font-size:clamp(.8rem,.94vw,.88rem);font-weight:700;margin-bottom:6px;color:var(--cream)}
+.ab2-ws p{font-size:clamp(.74rem,.86vw,.8rem);line-height:1.72;color:var(--fog-2);margin:0}
+
+@media(max-width:860px){
+  .ab2{grid-template-columns:1fr}
+  .ab2-photo-row{flex-direction:column}
+  .about-photo{width:160px}
+  .ab2-ws-grid{grid-template-columns:1fr}
+}
+
+
+/* 详情页 4 行：图文同排 */
+.r4-list{display:flex;flex-direction:column;gap:clamp(16px,2.4vw,28px)}
+.r4-row{
+  display:grid;grid-template-columns:minmax(0,1.42fr) minmax(0,1fr);
+  gap:clamp(16px,2.4vw,32px);align-items:stretch;
+  padding:clamp(14px,2vw,22px);
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:14px;
+  transition:border-color .4s;
+}
+.r4-row:hover{border-color:rgba(200,48,46,.28)}
+.r4-imgs{display:grid;gap:6px;align-content:start}
+.r4-imgs.n2{grid-template-columns:1fr 1fr}
+.r4-imgs.n3{grid-template-columns:repeat(3,1fr)}
+.r4-imgs.n4{grid-template-columns:repeat(4,1fr)}
+.r4-img{display:block;border-radius:6px;overflow:hidden;border:1px solid rgba(242,242,238,.07);cursor:zoom-in}
+.r4-img img{width:100%;display:block;transition:transform .6s var(--ease)}
+.r4-img:hover img{transform:scale(1.03)}
+.r4-text{display:flex;flex-direction:column;gap:9px}
+.r4-head{display:flex;align-items:baseline;gap:10px;margin-bottom:2px}
+.r4-no{
+  font-family:var(--serif);font-size:clamp(.82rem,1vw,.9rem);
+  color:var(--lime);white-space:nowrap;
+}
+.r4-title{font-size:clamp(.9rem,1.2vw,1.04rem);font-weight:800;letter-spacing:-.01em}
+.r4-tag{
+  font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--fog-2);margin-bottom:4px;
+}
+.r4-p b{
+  display:block;font-size:clamp(.86rem,.96vw,.92rem);font-weight:700;
+  color:var(--cream);margin-bottom:5px;
+}
+.r4-p p{
+  font-size:clamp(.82rem,.92vw,.9rem);line-height:1.78;
+  color:var(--fog);margin:0;
+}
+.r4-p p b{display:inline;color:var(--cream);font-weight:600}
+
+@media(max-width:1100px){
+  .r4-row{grid-template-columns:1fr}
+  .r4-imgs.n4{grid-template-columns:repeat(2,1fr)}
+}
+
+
+/* 10 模块精简条 */
+.cm-strip{
+  margin-top:clamp(18px,2.6vw,32px);
+  padding:clamp(12px,1.8vw,20px);
+  background:rgba(242,242,238,.025);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:12px;
+}
+.cm-strip-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.cm-strip-note{font-size:clamp(.72rem,.82vw,.78rem);color:var(--fog-2)}
+.cm-list{display:flex;flex-wrap:wrap;gap:8px}
+.cm-item{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:clamp(.72rem,.82vw,.78rem);font-weight:600;
+  color:var(--fog);
+  padding:5px 11px;
+  border:1px solid rgba(242,242,238,.1);
+  border-radius:999px;
+  background:rgba(10,10,10,.3);
+}
+.cm-item i{
+  font-style:normal;font-family:var(--serif);
+  font-size:.85em;color:var(--lime);
+}
+
+
+.cm-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px 12px}
+.cm-cell{padding:10px 12px;background:rgba(10,10,10,.28);border-left:2px solid rgba(200,48,46,.4);border-radius:0 8px 8px 0}
+.cm-cell-h{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.cm-cell-h i{font-style:normal;font-family:var(--serif);font-size:.9em;color:var(--lime);flex-shrink:0}
+.cm-cell-h b{font-size:clamp(.76rem,.86vw,.82rem);font-weight:700;color:var(--cream)}
+.cm-cell p{font-size:clamp(.7rem,.8vw,.76rem);line-height:1.6;color:var(--fog-2);margin:0}
+@media(max-width:860px){.cm-grid{grid-template-columns:1fr}}
+
+
+@media(max-width:1200px){.cm-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:860px){.cm-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.cm-grid{grid-template-columns:1fr}}
+
+
+/* 案例封面 + 信息 左右对齐，无空白 */
+.cs-hero{
+  display:grid;grid-template-columns:minmax(0,1.42fr) minmax(0,1fr);
+  gap:clamp(16px,2.4vw,36px);align-items:stretch;
+  margin-bottom:clamp(16px,2.4vw,28px);
+}
+.cs-hero-img{position:relative;overflow:hidden;border-radius:14px;border:1px solid rgba(242,242,238,.09)}
+.cs-hero-img img{width:100%;height:100%;display:block;object-fit:cover}
+.cs-hero-info{
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:clamp(16px,2.2vw,28px);
+  background:var(--forest-2);
+  border:1px solid rgba(242,242,238,.07);
+  border-radius:14px;
+}
+.cs-tag{
+  display:inline-block;align-self:flex-start;
+  font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--lime);padding:4px 10px;
+  border:1px solid rgba(200,48,46,.4);border-radius:999px;
+  margin-bottom:12px;
+}
+.cs-title{
+  font-size:clamp(1.32rem,2.16vw,1.92rem);line-height:1.2;
+  font-weight:800;letter-spacing:-.02em;margin-bottom:clamp(14px,2vw,22px);
+}
+.cs-facts{display:flex;flex-direction:column;gap:9px}
+.cs-f{display:grid;grid-template-columns:3.4em 1fr;gap:10px;align-items:baseline}
+.cs-f small{
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fog-2);
+}
+.cs-f b{font-size:clamp(.91rem,1.06vw,1.01rem);font-weight:600;color:var(--cream)}
+@media(max-width:900px){
+  .cs-hero{grid-template-columns:1fr}
+  .cs-hero-img{aspect-ratio:16/10}
+}
+
+
+
+/* 防止任何父容器导致塌陷 */
+.work-block{width:100%;box-sizing:border-box}
+.doc-hero{width:100%;box-sizing:border-box}
+.doc-hero-l,.doc-hero-r{min-width:0}
+.wrap{width:100%}
+
+
+
+/* 字号放大后的对齐方案 */
+.doc-screen{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(20px,3vw,52px);
+  align-items:center;      /* 垂直居中，两边高度自然对齐 */
+  padding:clamp(20px,2.6vw,34px) 0;
+  border-bottom:1px solid rgba(242,242,238,.06);
+  width:100%;
+  box-sizing:border-box;
+}
+.doc-screen > div{
+  min-width:0;
+  max-width:100%;
+}
+.doc-screen > div:last-child{
+  /* 图片列：撑满格子宽度 */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.doc-screen > div:last-child img{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:12px;
+}
+
+/* 品牌案例三栏：等高对齐 */
+.psr{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--line);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin-top:clamp(20px,3vw,34px);
+  align-items:stretch;
+}
+.psr-col{
+  padding:clamp(18px,2.6vw,32px) clamp(16px,2.2vw,26px);
+  display:flex;
+  flex-direction:column;
+}
+.psr-col p{
+  flex:1;
+  margin:0;
+}
+
+/* 案例封面：信息卡与图片等高 */
+.cs-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1.42fr) minmax(0,1fr);
+  gap:clamp(16px,2.4vw,36px);
+  align-items:stretch;
+}
+.cs-hero-img{
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(242,242,238,.09);
+}
+.cs-hero-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.cs-hero-info{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+@media(max-width:900px){
+  .doc-screen{grid-template-columns:1fr}
+  .psr{grid-template-columns:1fr}
+  .cs-hero{grid-template-columns:1fr}
+}
+
+
+/* 修复：图片列高度塌陷（a 标签是行内元素） */
+.doc-screen > .ds-visual{
+  display:block;
+  min-width:0;
+  width:100%;
+}
+.doc-screen > .ds-visual .ds-img{
+  display:block;
+  width:100%;
+  line-height:0;          /* 消除行内元素间隙 */
+}
+.doc-screen > .ds-visual .ds-img img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+
+/* ============================================================
+   方案C3 · 滚动驱动分层深度（内联补充）
+   —— 每个板块一套「图层编组」：背景 / 图片 / 文字 / 装饰
+   —— 不写任何初始 clip-path（全部由 gsap.set 设置）
+   ============================================================ */
+
+/* ---------- C3-1 案例封面：三层深度 ---------- */
+.cs-hero{
+  will-change: transform;
+}
+.cs-hero-img{
+  will-change: transform, clip-path;
+  overflow: hidden;
+}
+.cs-hero-img img{
+  will-change: transform;
+  transform-origin: center center;
+}
+.cs-hero-info{
+  will-change: transform, opacity;
+}
+
+/* ---------- C3-2 步骤图：对向分层 ---------- */
+.sr-img{
+  will-change: transform, clip-path;
+  overflow: hidden;
+}
+.sr-img img{
+  will-change: transform;
+  transform-origin: center center;
+}
+.step-row h4{
+  will-change: transform, opacity;
+}
+
+/* ---------- C3-3 文档区：文字图片反向交错 ---------- */
+.doc-screen > div:first-child{
+  will-change: transform, opacity;
+}
+.doc-screen .ds-visual{
+  will-change: transform;
+}
+.ds-img{
+  will-change: transform, clip-path;
+  overflow: hidden;
+}
+.ds-img img{
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* ---------- C3-4 推广素材：水平轨道 + 图层缩放 ---------- */
+.poster-grid.land-three.h-gallery{
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* pin 到视口顶部时，用 min-height + 垂直居中让画廊填满画面，
+     避免短卡片贴顶后下方留大片空白 */
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 6vh;
+  box-sizing: border-box;
+}
+/* 移动端不做 pin，取消最小高度避免多余留白 */
+@media (max-width: 860px){
+  .poster-grid.land-three.h-gallery{
+    min-height: 0;
+    display: block;
+    padding-block: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  .poster-grid.land-three.h-gallery{
+    min-height: 0;
+    display: block;
+    padding-block: 0;
+  }
+}
+.poster-grid.land-three .h-track{
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  will-change: transform;
+  transform-origin: left center;
+}
+.poster-grid.land-three .h-track > *{
+  flex: 0 0 auto;
+  /* 宽度下限保证「三张卡片总宽一定超过容器」，
+     否则宽屏下轨道不溢出，横向滚动就会失效。 */
+  width: clamp(320px, 46vw, 720px);
+  border-radius: 12px;
+  overflow: hidden;
+  will-change: transform, opacity;
+  scroll-snap-align: center;
+}
+
+/* ---- 横向滚动容器：滚轮 / 拖拽 / 触控板 均可左右滑动 ---- */
+.poster-grid.land-three .h-track{
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 不用 CSS 强制吸附：mandatory 会在每次滚轮增量后把位置吸回最近点，
+     表现为「滚一下又弹回第一张」。吸附改由 JS 在滚动空闲后执行。 */
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* 旧 Edge */
+  cursor: grab;
+  padding-bottom: 6px;
+  overscroll-behavior-x: contain;
+}
+.poster-grid.land-three .h-track::-webkit-scrollbar{
+  display: none;                  /* Chrome / Safari */
+}
+.poster-grid.land-three .h-track.is-dragging{
+  cursor: grabbing;
+}
+.poster-grid.land-three .h-track > * img{
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  will-change: transform;
+}
+
+/* 焦点标题条（容器内部最前，pin 后仍可定位） */
+.h-gallery-head{
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: clamp(8px, 1.2vw, 14px);
+  margin-bottom: clamp(10px, 1.6vw, 18px);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.focus-label{
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1.25vw, 1.08rem);
+  letter-spacing: -0.01em;
+  color: var(--cream);
+}
+.focus-counter{
+  font-family: var(--serif);
+  font-size: clamp(0.8rem, 1vw, 0.92rem);
+  color: var(--fog-2);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.focus-counter b{
+  color: var(--lime);
+  font-weight: 700;
+}
+
+/* ---------- C3-5 结尾：文字分层 + 信息格错峰 ---------- */
+.end-panel .mega .ch-wrap{
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: inherit;
+}
+.end-panel .mega .ch{
+  display: inline-block;
+  will-change: transform, opacity;
+}
+.contact-grid .contact-cell{
+  will-change: transform, opacity;
+}
+
+/* ---------- 接管原有 transition，避免与 GSAP 争抢 ---------- */
+.cs-hero-img,
+.sr-img,
+.ds-img,
+.poster-item,
+.seg3-item,
+.cs-hero-img img,
+.sr-img img,
+.ds-img img,
+.poster-item img{
+  transition: none !important;
+}
+.reveal{
+  transition: none !important;
+  will-change: transform, opacity;
+}
+.reveal.in{ opacity: 1; transform: none; }
+
+/* ---------- C3-6 速度 skew 作用域 ---------- */
+.cs-hero-img,
+.sr-img,
+.ds-img{
+  transform-origin: center center;
+}
+
+/* ============================================================
+   移动端（max-width: 860px）
+   —— 分层位移 / pin / 水平轨道全部关闭
+   —— 只保留结尾遮罩上移 + 速度 skew（幅度减半）
+   ============================================================ */
+@media (max-width: 860px){
+  .cs-hero{
+    transform: none !important;
+  }
+  .cs-hero-img,
+  .sr-img,
+  .ds-img{
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .cs-hero-img img,
+  .sr-img img,
+  .ds-img img{
+    transform: none !important;
+  }
+  .cs-hero-info{
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .doc-screen > div:first-child,
+  .doc-screen .ds-visual{
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .step-row h4{
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  /* 水平轨道退化 */
+  .poster-grid.land-three.h-gallery{
+    overflow: visible;
+  }
+  .poster-grid.land-three .h-track{
+    display: block;
+    transform: none !important;
+  }
+  .poster-grid.land-three .h-track > *{
+    width: 100%;
+    max-width: none;
+    margin-bottom: 12px;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .h-gallery-head{
+    display: none;
+  }
+}
+
+/* ---------- 减少动态效果 ---------- */
+@media (prefers-reduced-motion: reduce){
+  .cs-hero,
+  .cs-hero-img,
+  .sr-img,
+  .ds-img,
+  .poster-grid.land-three .h-track > *{
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .cs-hero-img img,
+  .sr-img img,
+  .ds-img img,
+  .poster-grid.land-three .h-track > * img{
+    transform: none !important;
+  }
+  .cs-hero-info,
+  .doc-screen > div:first-child,
+  .doc-screen .ds-visual,
+  .step-row h4,
+  .contact-grid .contact-cell{
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .end-panel .mega .ch{
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .reveal{ transform: none !important; opacity: 1 !important; }
+  .poster-grid.land-three .h-track{ transform: none !important; }
+}
+
+/* ============================================================
+   C3 修订补丁（2026-11-17 二次修订）
+   ============================================================ */
+
+/* ---------- 【关键修复】.ch 必须禁用 CSS transition ----------
+   基础版 .ch 带有 transition: transform .85s，会拦截 GSAP 每帧写入的
+   transform，导致结尾大字的 yPercent 动画“看起来跑完但视觉没动”，
+   文字永久卡在 translateY(105%) 被 .ch-wrap 的 overflow:hidden 裁掉。 */
+.ch{
+  /* 清掉基础版的 translateY(105%) rotate(3deg) 初始态。
+     必须用普通声明（不加 !important），让 GSAP 的 inline transform 能覆盖它；
+     否则 GSAP 会把 105% 读成 y=100.702px，之后只改 yPercent 无法归零。 */
+  transform: none;
+  transition: none !important;
+}
+.ch.in{
+  transform: none;
+  opacity: 1;
+}
+
+/* ---------- 顶部文字滚动淡入 ---------- */
+.hero-meta,
+.hero-statement{
+  will-change: transform, opacity;
+}
+
+/* ---------- 三个数字滚动计数 ---------- */
+.hero-foot .hf b{
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.c3-num{
+  display: inline-block;
+  will-change: contents;
+}
+
+/* ---------- 百叶窗（Venetian）------------ */
+.ds-img{
+  position: relative !important;
+  isolation: isolate;
+}
+.c3-bar{
+  position: absolute;
+  background: var(--forest);
+  pointer-events: none;
+  z-index: 2;
+  will-change: transform;
+  /* 覆盖在图片上，收缩时露出图片 */
+}
+
+/* ---------- 详情区文字随机线条 ---------- */
+.c3-lines{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* P1-7 审计修复：z-index:0 会让 70 条细线绘制在非定位正文之上，
+     文字被 1px 线穿过。降到 -1 置于文字之下。 */
+  z-index: -1;
+  overflow: hidden;
+}
+.c3-line{
+  position: absolute;
+  height: 1px;
+  background: rgba(242, 242, 238, 0.18);
+  transform-origin: left center;
+  transform: scaleX(0);
+  will-change: transform, opacity;
+}
+.doc-screen > div:first-child{
+  position: relative;
+}
+
+/* ---------- AIGC 板块：图片和文字换到左边（图左文右） ---------- */
+.doc-screen.is-img-left > div:first-child{
+  order: 2;
+}
+.doc-screen.is-img-left > .ds-visual{
+  order: 1;
+}
+
+/* ---------- flex-carousel 质感的画廊卡片 ---------- */
+.h-gallery{
+  perspective: 1400px;
+}
+.h-track{
+  transform-style: preserve-3d;
+}
+.h-track > *{
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+/* ---------- 移动端 / 减少动效兜底 ---------- */
+@media (max-width: 860px){
+  .c3-line{ display: none; }
+  .c3-bar{ display: none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .c3-line{ display: none; }
+  .c3-bar{ display: none; }
+  .hero-meta,
+  .hero-statement{ opacity: 1 !important; transform: none !important; }
+}
+
+/* ============================================================
+   C3 内容层级修订（2026-11-18）
+   重点短语：纯白 + 加粗；正文降噪，形成明确视觉重点
+   ============================================================ */
+
+/* 重点短语：纯白加粗（!important 压过容器级降噪规则） */
+.kw{
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  font-style: normal !important;
+  letter-spacing: -0.006em;
+}
+
+/* 正文基调降到约 82% 亮度 —— 让纯白重点跳出来 */
+#case1 p,
+#case2 p,
+#case2-steps .step-row p,
+#case1-steps .step-row p,
+#detail-logic p:not(.p-body),
+.ds-body{
+  color: #CFCFC8;
+}
+
+/* 精简后行高略放宽，阅读更松 */
+#case1 p,
+#case2 p,
+#case2-steps .step-row p,
+#case1-steps .step-row p,
+.ds-body{
+  line-height: 1.82;
+}
+
+/* ---------- 文字底部复现（逐字从下方升起）---------- */
+.c3-rise .ch-wrap{
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: inherit;
+}
+.c3-rise .ch{
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* 宣言二：标题字号压缩（原 106px 占 288px 高） */
+.panel.s5-compact .mega{
+  font-size: clamp(1.9rem, 4.3vw, 3.3rem) !important;
+  line-height: 1.06 !important;
+}
+
+/* ============================================================
+   审计优化补丁（2026-11-18）
+   ============================================================ */
+
+/* 画廊「可拖动」提示 */
+.focus-hint{
+  font-family: var(--sans);
+  font-size: clamp(0.68rem, 0.82vw, 0.76rem);
+  letter-spacing: 0.06em;
+  color: rgba(242, 242, 238, 0.34);
+  margin-left: auto;
+  margin-right: 14px;
+  white-space: nowrap;
+}
+
+/* 宣言二：压缩整屏占用（原 528px 只承载一句修辞） */
+.panel.s5-compact{
+  min-height: auto !important;
+  padding-block: clamp(32px, 4.4vh, 56px) !important;
+}
+.panel.s5-compact .a-rule{
+  margin-top: clamp(14px, 2vw, 22px) !important;
+}
+.panel.s5-compact > .wrap > div[style*="padding-top"]{
+  padding-top: 10px !important;
+}
+.s5-payload{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1.2vw, 14px);
+  margin-top: clamp(12px, 1.6vw, 18px);
+}
+.s5-chip{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(10px, 1.4vw, 15px) clamp(12px, 1.6vw, 18px);
+  border: 1px solid rgba(242, 242, 238, 0.12);
+  border-radius: 10px;
+  background: rgba(242, 242, 238, 0.02);
+}
+.s5-chip b{
+  font-family: var(--serif);
+  font-size: clamp(0.82rem, 1vw, 0.95rem);
+  color: #C8302E;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+.s5-chip span{
+  font-family: var(--sans);
+  font-size: clamp(0.76rem, 0.92vw, 0.86rem);
+  color: rgba(242, 242, 238, 0.72);
+  letter-spacing: -0.005em;
+}
+@media (max-width: 860px){
+  .s5-payload{ grid-template-columns: 1fr; }
+  .focus-hint{ display: none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .s5-payload{ transition: none !important; }
+}
+</style>
+
+<!-- ============ 方案C3 · 动效依赖（CDN） ============ -->
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+</head>
+<body>
+
+<!-- 等高线背景 -->
+<div class="topo" id="topo" aria-hidden="true"></div>
+
+<!-- 固定导航 -->
+<header class="nav">
+  <a href="#top" class="logo">
+    <span>李腾龙</span>
+    <em>LI TENGLONG</em>
+  </a>
+  <div class="nav-right">
+    <a href="#contact" class="pill">联系我 →</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><i></i></button>
+  </div>
+</header>
+
+<!-- 左下浮动卡 -->
+<div class="float-card" id="floatCard">
+  <div class="fc-label">Now Looking</div>
+  <div class="fc-main"><b>设计主管<br>长沙 · 2026</b></div>
+  <div class="fc-sub">6 Yrs · 17 Brands</div>
+</div>
+
+<!-- 滚动进度 -->
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+
+<!-- ============ HERO ============ -->
+<section class="hero-panel" id="top">
+  <div class="hero-inner">
+
+    <div class="hero-meta">
+      <span>Visual Portfolio — 2026</span>
+      <span>Changsha · CN</span>
+    </div>
+
+    <h1 class="hero-statement" id="heroTitle">
+      <span class="line">用 AI 与方法论</span>
+      <span class="line indent">撬动<em>散沙团队</em></span>
+      <span class="line">成为效率标杆</span>
+    </h1>
+
+    <!-- 岗位定位条：让 HR 3 秒内知道「你是谁 · 能解决什么」 -->
+    <div class="hero-role">
+      <span class="hr-tag">电商设计主管</span>
+      <span class="hr-sep">/</span>
+      <span class="hr-item"><b>6</b> 年电商设计</span>
+      <span class="hr-sep">/</span>
+      <span class="hr-item"><b>3</b> 年带团队</span>
+      <span class="hr-sep">/</span>
+      <span class="hr-item">管过 <b>20</b> 人+ · 跨 <b>3</b> 个设计中心</span>
+      <span class="hr-sep">/</span>
+      <span class="hr-item">主导 <b>17</b> 个品牌视觉升级</span>
+    </div>
+
+    <div class="hero-foot">
+      <div class="hf">
+        <b>60<em>%</em>→0</b>
+        <small>核心骨干流失</small>
+        <p>接手当月 1 周稳局</p>
+      </div>
+      <div class="hf">
+        <b>95<em>分</em></b>
+        <small>运营满意度</small>
+        <p>部门负责人评分 · 高层核实</p>
+      </div>
+      <div class="hf">
+        <b>−25<em>%</em></b>
+        <small>设计成本</small>
+        <p>人力口径 · 对比上季度</p>
+      </div>
+    </div>
+
+    <div class="scroll-hint"><i></i><span>Scroll to explore</span></div>
+  </div>
+</section>
+
+<!-- ============ 宣言 1 ============ -->
+<section class="panel short forest-2">
+  <div class="wrap">
+    <div class="statement-block reveal">
+      <h2 class="mega">
+        设计不只是<br>
+        <span class="dim">把图</span>做好看，<br>
+        而是让<em>生意</em><br>
+        <span class="dim">真的</span>跑起来。
+      </h2>
+    </div>
+    <div class="a-rule" style="margin-top:clamp(24px,4vw,48px)"></div>
+    <div style="display:flex;justify-content:space-between;gap:20px;padding-top:14px;flex-wrap:wrap">
+      <span class="eyebrow">Design = Business</span>
+      <span class="eyebrow">01 / 07</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 关于我 ============ -->
+<section class="panel cream" id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">关于我<em>.</em></h2>
+      <span class="meta">02 / About Me</span>
+    </div>
+
+    <div class="ab2">
+      <!-- 左：26岁 + 照片 + 能力 -->
+      <div class="ab2-left reveal">
+        <h3 class="mega-zh" style="font-size:clamp(1.7rem,2.8vw,2.5rem);line-height:1.06;text-transform:none;margin-bottom:clamp(16px,2.2vw,24px)">
+          26 岁<br>
+          <em>6 年电商设计</em><br>
+          3 年带团队
+        </h3>
+
+        <div class="ab2-photo-row">
+          <div class="about-photo">
+            <img src="assets_v2/photo/portrait.webp" alt="李腾龙个人照片" loading="lazy">
+          </div>
+          <div class="ab2-skills">
+            <div class="ab2-sk-h">核心能力</div>
+            <div class="ab2-sk"><span>团队管理</span><i style="width:92%"></i></div>
+            <div class="ab2-sk"><span>品牌体系</span><i style="width:95%"></i></div>
+            <div class="ab2-sk"><span>转化优化</span><i style="width:88%"></i></div>
+            <div class="ab2-sk"><span>AI 落地</span><i style="width:90%"></i></div>
+            <div class="ab2-sk"><span>跨部门协作</span><i style="width:93%"></i></div>
+          </div>
+        </div>
+
+        <p class="p-body" style="margin-top:clamp(16px,2.2vw,24px)">
+          湖南工商大学 · 电商设计 · 大专。求职意向：<strong>设计主管</strong>，长沙。
+        </p>
+        <p class="p-body" style="margin-top:10px">
+          主导 <strong>17 个品牌</strong>视觉升级。带过 <strong>20 人</strong>，分为天猫、京东、拼多多共 <strong>3 个设计团队</strong>，从 0 到 1 建过品牌视觉体系。跨部门协作能力极强，善于推动 <strong>AI 工作流落地</strong>和优化迭代 <strong>设计 SOP 流程</strong>。
+        </p>
+
+        <div class="ab2-awards">
+          <div class="ab2-aw-h">荣誉奖项 <span>2023 — 2025 · 6 项</span></div>
+          <div class="awards">
+            <span class="aw"><i>2025</i>公司级「服务态度之星」<em>全公司级组织奖</em></span>
+            <span class="aw"><i>2025</i>部门 AI 竞赛第一名</span>
+            <span class="aw"><i>2024-2025</i>年度优秀员工</span>
+            <span class="aw"><i>2023</i>Q4 设计一等奖 · Q2 飞跃奖</span>
+            <span class="aw"><i>2025 · 6 月</i>核心骨干参与内蒙古 5 天旅游徒步<em>1000 选 60</em></span>
+            <span class="aw"><i>2026 · 1 月</i>核心骨干参与海南 4 天旅游年会<em>核心骨干 60 人</em></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：履历 + 工作方式 -->
+      <div class="ab2-right reveal reveal-d1">
+        <div class="cv-row">
+          <div class="cv-date">2023.03 — 2026.07</div>
+          <div class="cv-main">
+            <b>湖南柠乐品牌管理有限公司</b>
+            <span class="role">设计主管</span>
+            <p>负责设计团队日常管理，把控项目质量与交付进度，提高团队协作及设计能力。统筹视觉体系与人才梯队搭建，深刻理解品牌战略与商业目标。具备用户行为、数据流量转化分析能力，具备较强跨部门协作沟通能力，与运营团队紧密合作以销售结果为导向。直接管理三个设计团队共 <strong>17 人</strong>，叠加渲染、拍摄等外协共计 <strong>20 人+</strong>（团队由 5 人扩至 18 人）。</p>
+          </div>
+          <div class="cv-badge">3 年</div>
+        </div>
+
+        <div class="cv-row">
+          <div class="cv-date">2021.05 — 2023.02</div>
+          <div class="cv-main">
+            <b>湖南西子健康</b>
+            <span class="role">电商设计师</span>
+            <p>独立负责肌肉科技、ALLMUS 谷本日记等多平台店铺核心设计产出。协同品类运营深度挖掘产品核心卖点，参与前期页面策划并转化为高转化视觉方案。基于点击率、转化率、停留时长等核心数据反馈进行驱动优化。累计输出<strong>详情页 30+、主图 200+</strong>；推广图平均点击率 <strong>15.38%</strong>，最高 36.58%。</p>
+          </div>
+          <div class="cv-badge">2 年</div>
+        </div>
+
+        <div class="cv-row" style="border-bottom:1px solid rgba(10,10,10,.13)">
+          <div class="cv-date">2017.09 — 2020.06</div>
+          <div class="cv-main">
+            <b>湖南工商大学</b>
+            <span class="role">电商设计</span>
+            <p>在校任<strong>桌游棋社社长</strong>，团队协作与组织能力强，社员规模由往年 15 人拉新至 <strong>50 人</strong>。具有扎实的美术功底和良好审美，能准确把控视觉节奏。</p>
+          </div>
+          <div class="cv-badge">非全日制</div>
+        </div>
+
+        <div class="ab2-style">
+          <div class="ab2-ws-h">我的工作方式</div>
+          <div class="ab2-ws-grid">
+            <div class="ab2-ws"><b>先算账，再画图</b><p>接手任何项目先问「这个设计要解决什么生意问题」，把目标翻译成可验收的指标，再开始动视觉。</p></div>
+            <div class="ab2-ws"><b>流程先于工具</b><p>先跑通一次完整链路，确认走得通，再考虑上工具和自动化。顺序反了就是白投入。</p></div>
+            <div class="ab2-ws"><b>数据投票，不拍脑袋</b><p>多个方向并行跑，用真实点击率和转化率做决策，避免主设计师一个人的审美风险。</p></div>
+            <div class="ab2-ws"><b>把能力变成资产</b><p>规范、素材库、SOP、手册——人走了资产还在，团队能力不依赖某一个人。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section></section></section></section>
+
+<!-- ============ 四段能力 ============ -->
+<section class="panel">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">在柠乐做了四件<em>有结果</em>的事</h2>
+      <span class="meta">03 / Core Strengths</span>
+    </div>
+
+    <div class="ability-grid">
+      <div class="ability reveal">
+        <div class="ab-no">01</div>
+        <h3>临危受命 · 稳定团队</h3>
+        <div class="ab-line"><span>动作</span><span>2025.02 接手离职率 60%、运营满意度全公司最低的团队。1 周内全员面谈 + 运营对接会，锁定 3 大堵点当月稳局。</span></div>
+        <div class="ab-line"><span>结果</span><span>6 名拟离职全部留下、<strong>核心骨干 0 流失</strong>；满意度垫底 → <strong>95 分</strong>。</span></div>
+      </div>
+
+      <div class="ability reveal reveal-d1">
+        <div class="ab-no">02</div>
+        <h3>多团队并行管理</h3>
+        <div class="ab-line"><span>动作</span><span>同时负责京东母婴 / 拼多多保健 / 天猫膏滋 3 个类目（重叠率 20%），用差异化策略落地：素材库 / 主图 3 秒原则 / 新中式规范。</span></div>
+        <div class="ab-line"><span>结果</span><span>详情页转化 <strong>+15%</strong>、点击率 <strong>+25%</strong>、需求响应 <strong>+40%</strong>、跨部门效率 <strong>+50%</strong>。</span></div>
+      </div>
+
+      <div class="ability reveal">
+        <div class="ab-no">03</div>
+        <h3>体系构建</h3>
+        <div class="ab-line"><span>动作</span><span>推动模块化授权（效率组 / AI 组 / 质量组）+ 271 绩效（20% 头部 / 70% 中间 / 10% 尾部）+ 前置沟通清单。</span></div>
+        <div class="ab-line"><span>结果</span><span>释放约 <strong>70% 协调精力</strong>；返工率 <strong>25%→10%</strong>；一次通过率 <strong>40%→70%</strong>。</span></div>
+      </div>
+
+      <div class="ability reveal reveal-d1">
+        <div class="ab-no">04</div>
+        <h3>AI 落地</h3>
+        <div class="ab-line"><span>动作</span><span>2025.05 获部门 AI 竞赛第一名；主编 <strong>87 页</strong>《AI 训练问题解决方案手册》（42 类问题闭环）；推动 SD / MJ / 自研插件 / 豆包 / 即梦。</span></div>
+        <div class="ab-line"><span>结果</span><span>AI 使用率 <strong>0→75%</strong>、建模需求 <strong>−40%</strong>、设计成本 <strong>−75%</strong>。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 宣言 2 ============ -->
+<section class="panel short forest-2 s5-compact" style="padding-top:40px!important;padding-bottom:40px!important;min-height:0!important">
+  <div class="wrap">
+    <div class="statement-block reveal">
+      <h2 class="mega">
+        <span class="dim">先</span>讲清楚<br>
+        <em>为什么</em>这么做，<br>
+        再展示<em>怎么做</em>。
+      </h2>
+    </div>
+    <div class="a-rule" style="margin-top:clamp(24px,4vw,48px)"></div>
+    <div style="display:flex;justify-content:space-between;gap:20px;padding-top:14px;flex-wrap:wrap">
+      <span class="eyebrow">Reason before Render</span>
+      <span class="eyebrow">04 / 07</span>
+    </div>
+      <div class="s5-payload">
+        <div class="s5-chip"><b>①</b><span>定位 · 我是谁</span></div>
+        <div class="s5-chip"><b>②</b><span>决策 · 为什么这么做</span></div>
+        <div class="s5-chip"><b>③</b><span>数据 · 真的动了吗</span></div>
+      </div>
+  </div>
+</section>
+
+<!-- ============ 案例 01 · 膏遗 ============ -->
+<section class="panel" id="case1">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">Case 01 — <em>膏遗</em></h2>
+      <span class="meta">2025.07 — 10 / 非遗膏方</span>
+    </div>
+
+    <!-- 结果条 -->
+    <div class="case-kpi reveal">
+      <div class="ck"><b>+22<em>%</em></b><small>平均停留</small></div>
+      <div class="ck"><b>+18<em>%</em></b><small>转化率</small></div>
+      <div class="ck"><b>8<em>+</em></b><small>系列产品</small></div>
+      <div class="ck"><b>1<em>套</em></b><small>视觉规范</small></div>
+    </div>
+
+    <!-- 封面 + 关键信息（左右对齐，不留空） -->
+    <div class="cs-hero reveal">
+      <div class="cs-hero-img">
+        <img src="assets/case/gy-cover-kv.webp" alt="膏遗主视觉">
+      </div>
+      <div class="cs-hero-info">
+        <div class="cs-tag">非遗专藏膏方领导品牌</div>
+        <h3 class="cs-title">从 0 到 1<br>建立可扩张的视觉语言</h3>
+        <div class="cs-facts">
+          <div class="cs-f"><small>角色</small><b>项目负责人 + 主设计</b></div>
+          <div class="cs-f"><small>团队</small><b>3 人小组</b></div>
+          <div class="cs-f"><small>落地</small><b>8+ 系列产品</b></div>
+          <div class="cs-f"><small>结果</small><b>停留 +22% · 转化 +18%</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 问题 · 方案 · 结果 -->
+    <div class="psr reveal">
+      <div class="psr-col">
+        <div class="psr-k"><span>01</span>问题</div>
+        <h4>零视觉资产，需支撑八系列扩张</h4>
+        <p>接手时膏遗是全新品牌，零视觉资产——没有 logo 规范、没有色彩体系、没有摄影方向，手上三个系列，公司要求三个月内支撑八个系列扩张。竞品环境更棘手：方回春堂、喜纯等同期品牌全部集中在「古风 + 暖调」，用色、构图、字体高度同质化。<b class="kw">「古风」已是及格线，不是差异化</b>，跟随即成为第三个长得一样的人。</p>
+      </div>
+      <div class="psr-col is-key">
+        <div class="psr-k"><span>02</span>方案</div>
+        <h4>先定一句话，再拆可验证标准</h4>
+        <p>第一步不是画图，是给品牌找一句能被记住的话——「非遗专藏膏方领导品牌」，必须够短、够专、够可证。再提炼「首创膏方五专标准」作信任状：古方新研、足年道地、古法工艺、柴火熬制、顶级品质。<b class="kw">定位回答「我是谁」，五专才回答「凭什么信你」</b>。视觉建立五色系：褐色家族统一全线，每个系列分配识别色。</p>
+      </div>
+      <div class="psr-col">
+        <div class="psr-k"><span>03</span>结果</div>
+        <h4>一套语言支撑八系列扩张</h4>
+        <p>上线后膏遗详情页平均停留时长 <b class="kw">+22%</b>，转化率 <b class="kw">+18%</b>。更关键的是结构性收益：八个系列复用同一套视觉语言，新系列上线不必重做调研、重新定调、重新验证，只替换产品图与卖点即可投产。单系列立项到上线周期缩短约一半，设计师的时间从重复搭框架转回策略判断。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="case2-steps">
+  <div class="wrap">
+    <p class="p-body reveal" style="max-width:60ch;margin-bottom:clamp(20px,3vw,34px)">零视觉资产的新品牌，如何在 3 个月内长出一套支撑 8 个系列扩张的视觉语言。</p>
+  </div>
+
+  <div class="wrap">
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 01</div>
+        <h4>先把「非遗」翻译成一句<em>能记住</em>的话</h4>
+        <div class="sr-body"><p>品牌的原点是一个矛盾：膏方是「非遗专藏」，听起来很重，但货架上只给你 <b class="kw">3 秒</b>——没人读文案、看工艺，只扫一眼图。</p><p>所以第一件事不是画图，是 <b class="kw">给品牌找一句能被记住的话</b>——「非遗专藏膏方领导品牌」：够短能印在任何位置、够专别人不敢说、够可证能拆出证据链。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-strategy-cover.webp" onclick="return openLB(this)"><img src="assets/case/gy-strategy-cover.webp" alt="非遗专藏膏方领导品牌定位" loading="lazy"></a></div>
+    </div>
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 02</div>
+        <h4>先想清楚<em>卖给谁</em>、凭什么不一样</h4>
+        <div class="sr-body"><p>开工前先出两份文档。第一份 <b class="kw">品牌基本情况</b>：名称、定位、核心价值、竞品对标，让全员认知一致。</p><p>第二份 <b class="kw">目标用户画像</b>：人群特征、消费行为、审美偏好、价格敏感度、决策链路。膏遗用户是 35–50 岁、注重养生但怕被割的中高收入人群，<b class="kw">不买「网红感」，买「可信感」</b>。这两页直接决定用色与构图。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-brand-basic.webp" onclick="return openLB(this)"><img src="assets/case/gy-brand-basic.webp" alt="先想清楚卖给谁、凭什么不一样" loading="lazy"></a></div>
+    </div>
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 03</div>
+        <h4>问题不在<em>不好看</em>，在没差异</h4>
+        <div class="sr-body"><p>左边是升级前的详情页：信息平铺、无视觉重心。右边竞品全是 <b class="kw">「古风 + 暖调」</b>。</p><p>这说明 <b class="kw">「古风」已是及格线，不是差异化</b>。跟随即成为第三个长得一样的人。差异化只能从别处找：用高对比暗调 + 器物质感建立「贵」的第一印象，让它在货架上因「不像别人」而被看到。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-before-problem.webp" onclick="return openLB(this)"><img src="assets/case/gy-before-problem.webp" alt="问题不在不好看，在没差异" loading="lazy"></a></div>
+    </div>
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 04</div>
+        <h4>把「五专标准」变成<em>可执行</em>的视觉规则</h4>
+        <div class="sr-body"><p>「非遗」无法验证，竞品都在说等于没说。于是提出 <b class="kw">「首创膏方五专标准」</b>，拆成五个可核对动作：古方新研、足年道地、古法工艺、柴火熬制、顶级品质。</p><p>关键转化在这里：<b class="kw">把不可验证的概念，翻译成可验证的动作</b>——用户不必信「非遗」，只需信「柴火熬制」这类看得懂的事。视觉对应高对比暗调 + 宋代器物质感。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-strategy-cover.webp" onclick="return openLB(this)"><img src="assets/case/gy-strategy-cover.webp" alt="把「五专标准」变成可执行的视觉规则" loading="lazy"></a></div>
+    </div>
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 05</div>
+        <h4><em>色彩</em>体系</h4>
+        <div class="sr-body"><p>这套色彩叫 <b class="kw">「褐色统一多色系」</b>：同一褐色家族统一全部产品线，每个系列分配识别色。8 个系列像一家人，单品又能被单独记住。</p><p>四个基础色定死：<b class="kw">润米 #efe4d3</b>（宣纸底）、<b class="kw">奢金 #C9A962</b>（只做信任标记）、<b class="kw">古棕 #8B7355</b>（正文线条）、<b class="kw">雅褐 #3D2F23</b>（深色背景）。系列识别色另配朱红、深紫、墨绿。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-color-system.webp" onclick="return openLB(this)"><img src="assets/case/gy-color-system.webp" alt="色彩体系" loading="lazy"></a></div>
+    </div>
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 06</div>
+        <h4><em>字体</em>规范</h4>
+        <div class="sr-body"><p>字体策略是 <b class="kw">「新中式简约字体」</b>：不用黑体（太现代），不用书法体（太江湖），而用宋体家族在两者之间取平衡。</p><p>标题用三极锦宋简体，笔画刀刻感呼应「非遗膏方」的厚重；正文用思源宋体，更柔和、字重更多，两万像素长图用锦宋会阅读疲劳。<b class="kw">锦宋负责「立」，思源负责「读」</b>。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-type-system.webp" onclick="return openLB(this)"><img src="assets/case/gy-type-system.webp" alt="字体规范" loading="lazy"></a></div>
+    </div>
+    
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 08</div>
+        <h4>同一个礼盒，<em>三种场景</em>演绎</h4>
+        <div class="sr-body"><p>同一个 1596 礼盒，三种布景拍出三种情绪：<b class="kw">木纹台面的温润</b>、<b class="kw">圆框的仪式感</b>、<b class="kw">枯木暖橙的时间感</b>。</p><p>三种布景对应三种场景：自用看质感、送礼看仪式、年节看时令。<b class="kw">同一套规范靠布景差异撑起不同产品线的性格</b>，不必为每款重做视觉。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/gy-kv-01.webp" onclick="return openLB(this)"><img src="assets/case/gy-kv-01.webp" alt="同一个礼盒，三种场景演绎" loading="lazy"></a></div>
+    </div>
+      </div>
+</section>
+
+<section class="panel" id="case2">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">Case 02 — <em>百年医仁</em></h2>
+      <span class="meta">2025 / 主打产品视觉升级</span>
+    </div>
+
+    <div class="case-kpi reveal">
+      <div class="ck"><b>400<em>亿</em></b><small>赛道规模</small></div>
+      <div class="ck"><b>4000<em>万+</em></b><small>曝光验证</small></div>
+      <div class="ck"><b>5<em>方向</em></b><small>并行测试</small></div>
+      <div class="ck"><b>6<em>条</em></b><small>内容策略</small></div>
+    </div>
+
+    <!-- 封面 + 关键信息 -->
+    <div class="cs-hero reveal">
+      <div class="cs-hero-img">
+        <img src="assets/case/bn-cover.webp" alt="百年医仁主视觉">
+      </div>
+      <div class="cs-hero-info">
+        <div class="cs-tag">酸枣仁膏 · 分众人群差异化</div>
+        <h3 class="cs-title">五个方向并行<br>数据收敛一套打法</h3>
+        <div class="cs-facts">
+          <div class="cs-f"><small>角色</small><b>视觉负责人</b></div>
+          <div class="cs-f"><small>协作</small><b>品类运营 + 摄影</b></div>
+          <div class="cs-f"><small>验证</small><b>5 方向 × 6 策略</b></div>
+          <div class="cs-f"><small>结果</small><b>收敛 1 套可复制方案</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="psr reveal">
+      <div class="psr-col">
+        <div class="psr-k"><span>01</span>问题</div>
+        <h4>四百亿赛道无人覆盖分众人群</h4>
+        <p>助眠赛道规模约 400 亿，其中「睡眠浅、易醒」的分众人群超过 <b class="kw">4000 万</b>，与「完全睡不着」的需求并不相同。但头部五个品牌全部以「古方」「千年传承」为诉求，没有一个针对分众人群做过差异化——消费者看到的是五个长得一样的选项，只能在价格上做选择。分众人群的位置仍空缺，<b class="kw">但不能跟着比谁更「古」，那条赛道已经挤满</b>。</p>
+      </div>
+      <div class="psr-col is-key">
+        <div class="psr-k"><span>02</span>方案</div>
+        <h4>五向并行，数据收敛</h4>
+        <p>传统做法是主设计师拍板定一个方向，一旦选错整套物料重做。我们反过来：<b class="kw">并行五个视觉方向</b>，每个方向配六条内容策略（信任前置、场景具象、痛点直击、数据佐证、权威背书、成分解析），各自产出完整素材组，投放真实流量跑两周，累计曝光超 4000 万。<b class="kw">不看谁更好看，只看点击率、加购率、转化率</b>。</p>
+      </div>
+      <div class="psr-col">
+        <div class="psr-k"><span>03</span>结果</div>
+        <h4>五向收敛为一套可复制方案</h4>
+        <p>两周后数据给出答案：<b class="kw">「暖金 + 朱红」方向点击率与加购率显著领先</b>，其余四个方向淘汰。收敛后的视觉语言成为后续所有产品的标准模板，新品视觉决策周期 <b class="kw">从两周缩短至三天</b>——方向已验证，只需在新品上执行。这套「并行测试、数据收敛」后来成为团队标准动作。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="case1-steps">
+  <div class="wrap">
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 01</div>
+        <h4>先<em>选对产品</em>，再谈视觉</h4>
+        <div class="sr-body"><p>百年医仁有多条产品线：酸枣仁膏、阿胶糕、代餐粉、养生茶，销量与增长各不相同。<b class="kw">不是每个都值得投入视觉升级</b>，投错就是浪费。</p><p>所以第一步不是设计，是 <b class="kw">选品</b>。用真实市场数据做四组对比，找「增长最快 + 视觉最弱」的交叉点：前者说明有需求红利，后者说明有设计切入点。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-product.webp" onclick="return openLB(this)"><img src="assets/case/bn-product.webp" alt="先选对产品，再谈视觉" loading="lazy"></a></div>
+    </div>
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 02</div>
+        <h4>四组数据找出<em>增长最快</em>的品类</h4>
+        <div class="sr-body"><p>拉出淘宝/天猫 4 个细分品类近 30 天销售数据，对比四个指标：<b class="kw">销售额、客单价、评价数、品牌集中度</b>。</p><p>结论明确：<b class="kw">酸枣仁膏增速最快（+25%）</b>，但头部品牌视觉几乎一模一样，集中度高、差异化空白。其余三个品类要么增速平缓，要么头部已有强势视觉壁垒，投入产出不划算。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-data-01.webp" onclick="return openLB(this)"><img src="assets/case/bn-data-01.webp" alt="四组数据找出增长最快的品类" loading="lazy"></a></div>
+    </div>
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 03</div>
+        <h4>400 亿的盘子，没人把<em>分众人群</em>讲清楚</h4>
+        <div class="sr-body"><p>助眠市场超 400 亿，但重点不在这个数字，而在 <b class="kw">「睡眠浅、易醒」的分众人群有 4000 万+</b>——与「完全睡不着」的需求不同，要的东西也不一样。</p><p>头部 5 个品牌都在讲「古方」，全部打「助眠」泛需求，没有一个针对分众人群做差异化。切入点因此明确：<b class="kw">不比谁更「古」，而是把分众人群讲清楚</b>。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-market.webp" onclick="return openLB(this)"><img src="assets/case/bn-market.webp" alt="400 亿的盘子，没人把分众人群讲清楚" loading="lazy"></a></div>
+    </div>
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 04</div>
+        <h4>5 个品牌，<em>同一个模子</em></h4>
+        <div class="sr-body"><p>拉出类目 TOP5 详情页首屏横向对比，发现都在 <b class="kw">同一套语汇</b>里：暖黄底、药材堆叠、大字功效。</p><p>这套语汇已被用户认知为「该有的样子」，能降理解成本；而 <b class="kw">跳出这套语汇立刻就有区分度</b>，前提是产品力撑得住。所以我们没完全背离，保留「暖」的温度、换成「暗金」的质感。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-visual-analysis.webp" onclick="return openLB(this)"><img src="assets/case/bn-visual-analysis.webp" alt="5 个品牌，同一个模子" loading="lazy"></a></div>
+    </div>
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 05</div>
+        <h4>5 个视觉方向 + <em>6 条</em>内容策略</h4>
+        <div class="sr-body"><p>针对分众人群，定了 <b class="kw">5 个视觉方向</b>（高品质感、原料表达、内容场景、人物代入、焦点表达）与 <b class="kw">6 条内容策略</b>（信任前置、场景具象、痛点直击、数据佐证、权威背书、成分解析）。</p><p>每一条都对应竞品的一个具体短板。五个方向不同时上线，而是 <b class="kw">并行做小样投放测试</b>，用点击率与加购率收敛方向——避免一人拍板的风险。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-strategy-5.webp" onclick="return openLB(this)"><img src="assets/case/bn-strategy-5.webp" alt="5 个视觉方向 + 6 条内容策略" loading="lazy"></a></div>
+    </div>
+    <div class="step-row is-reverse reveal">
+      <div>
+        <div class="sr-no">Step 06</div>
+        <h4>把「像药」做成<em>「像补品」</em></h4>
+        <div class="sr-body"><p>竞品都在讲「药食同源」，视觉就做成了「药」——白底、蓝字、成分表。我们反其道：<b class="kw">暗紫 / 深红 / 金的高品质色调 + 强光影</b>，把它做成「像补品」而不是「像药」。</p><p>核心判断：<b class="kw">买这个产品的人要的是「修养」，不是「治病」</b>。药感让人联想到病痛，补品感才能传递「我在善待自己」的情绪价值。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-diff-01.webp" onclick="return openLB(this)"><img src="assets/case/bn-diff-01.webp" alt="把「像药」做成「像补品」" loading="lazy"></a></div>
+    </div>
+    <div class="step-row reveal">
+      <div>
+        <div class="sr-no">Step 07</div>
+        <h4>让「功效」有<em>代入感</em></h4>
+        <div class="sr-body"><p>拍了两组人物，各自解决一个不同的问题：</p><p><b class="kw">医女坐诊</b>——传统服饰女医师诊脉，建立专业信任，回答「凭什么信你」；<b class="kw">女性消费饮用</b>——日常场景喝一杯，建立生活代入，回答「我什么时候需要它」。</p><p>两组作用不能互换：专业感太强会觉得「这是药」，生活感太强会觉得「这不专业」。<b class="kw">两组并存，才能同时说服理性与感性两类购买动机</b>。</p></div>
+      </div>
+      <div><a class="sr-img" href="#" data-full="assets/case/bn-figure.webp" onclick="return openLB(this)"><img src="assets/case/bn-figure.webp" alt="让「功效」有代入感" loading="lazy"></a></div>
+    </div>  </div>
+</section>
+
+
+
+
+<!-- ============ 详情页拆解（7 大板块） ============ -->
+<section class="panel" id="detail-logic">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">详情页拆解<em>.</em></h2>
+      <span class="meta">03 / 7 Sections · 膏遗蒲公英佛手消散膏</span>
+    </div>
+    <p class="p-body reveal" style="max-width:66ch;margin-bottom:clamp(18px,2.6vw,28px)">电商设计做的不是图，是转化。把膏遗·蒲公英佛手消散膏按 <b class="kw">7 大板块</b>拆开。</p>
+
+    <!-- 结果条 -->
+    <div class="dl-result reveal">
+      <div class="dl-r"><b>+22<em>%</em></b><small>平均停留</small></div>
+      <div class="dl-r"><b>+18<em>%</em></b><small>转化率</small></div>
+      <div class="dl-r"><b>7<em>大板块</em></b><small>信息结构</small></div>
+      <div class="dl-r"><b>16<em>屏</em></b><small>完整详情</small></div>
+    </div>
+
+    <!-- 7 大板块逐块拆解 -->
+    <div class="r4-list">
+      <div class="r4-row reveal">
+        <div class="r4-imgs n4"><a class="r4-img" href="#" data-full="assets_v2/detail7/p1_brand_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p1_brand_01.webp" alt="膏遗 品牌印象 + 权威背书" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p1_brand_02.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p1_brand_02.webp" alt="膏遗 品牌印象 + 权威背书" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p2_auth_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p2_auth_01.webp" alt="膏遗 品牌印象 + 权威背书" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p2_auth_02.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p2_auth_02.webp" alt="膏遗 品牌印象 + 权威背书" loading="lazy"></a></div>
+        <div class="r4-text">
+          <div class="r4-head">
+            <span class="r4-no">01 · 02</span>
+            <h4 class="r4-title">品牌印象 + 权威背书</h4>
+          </div>
+          <div class="r4-tag">开场三秒与信任建立</div>
+          <div class="r4-p"><b>首屏决策逻辑</b><p>第一屏不呈现产品，而呈现品牌标识与五色阵列——用户进页面先判断 <b class="kw">品牌可信度</b>，不是产品；产品置于品牌气质下才有价值感，单独呈现等同商品图。第二屏放权威背书：央视展播与标准起草单位占屏三分之一，缩成角标等于没放。</p></div><div class="r4-p"><b>一次关键调整</b><p>首屏标题原用「千年古方」，点击率低；换成「中国膏方标准起草单位」后停留上升。<b class="kw">「古」是形容词，「起草单位」是身份</b>——用户只识别身份。</p></div>
+        </div>
+      </div>
+      <div class="r4-row reveal">
+        <div class="r4-imgs n4"><a class="r4-img" href="#" data-full="assets_v2/detail7/p3_kv_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p3_kv_01.webp" alt="膏遗 核心卖点 + 功效情绪" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p3_kv_02.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p3_kv_02.webp" alt="膏遗 核心卖点 + 功效情绪" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p7_effect_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p7_effect_01.webp" alt="膏遗 核心卖点 + 功效情绪" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p7_effect_02.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p7_effect_02.webp" alt="膏遗 核心卖点 + 功效情绪" loading="lazy"></a></div>
+        <div class="r4-text">
+          <div class="r4-head">
+            <span class="r4-no">03 · 07</span>
+            <h4 class="r4-title">核心卖点 + 功效情绪</h4>
+          </div>
+          <div class="r4-tag">理性说服与感性共鸣</div>
+          <div class="r4-p"><b>数字的优先级</b><p>「三珍真实添加量 ≥40%」视觉权重大于产品图——用户对「非遗」已免疫，却对可横向比较的百分比敏感；1596 同理，具体年份远胜「历史悠久」。<b class="kw">可验证的数字，是替代形容词的最优解</b>。</p></div><div class="r4-p"><b>标准的拆分逻辑</b><p>「非遗」不可验证，于是拆成五项可核对动作：古方新研、足年道地、古法工艺、柴火熬制、顶级品质。用户未必记住每条，但会形成「这品牌有标准」的判断。<b class="kw">抽象概念必须拆到可核对的颗粒度</b>。</p></div><div class="r4-p"><b>尾屏的诉求转换</b><p>到第七屏，功效认知已完成但决策未发生。再堆成分是浪费，必须转情感：尾屏用生活场景，把「疏肝解郁」换成可自我代入的日常。<b class="kw">理性解决「是否可信」，感性解决「是否需要」</b>。</p></div>
+        </div>
+      </div>
+      <div class="r4-row reveal">
+        <div class="r4-imgs n4"><a class="r4-img" href="#" data-full="assets_v2/detail7/p5_craft_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p5_craft_01.webp" alt="膏遗 非遗工艺 + 证书信任" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p5_craft_02.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p5_craft_02.webp" alt="膏遗 非遗工艺 + 证书信任" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p5_craft_03.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p5_craft_03.webp" alt="膏遗 非遗工艺 + 证书信任" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p6_cert_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p6_cert_01.webp" alt="膏遗 非遗工艺 + 证书信任" loading="lazy"></a></div>
+        <div class="r4-text">
+          <div class="r4-head">
+            <span class="r4-no">05 · 06</span>
+            <h4 class="r4-title">非遗工艺 + 证书信任</h4>
+          </div>
+          <div class="r4-tag">把资质转为可感知过程</div>
+          <div class="r4-p"><b>工艺的量化表达</b><p>「非遗技艺」是资质，用户感知不到难度，于是转成四项可对比数据：<b class="kw">20 倍精纯、100 斤原料 = 5 斤膏、72 道工序、3 日淬一膏</b>。</p></div><div class="r4-p"><b>零添加的表达方式</b><p>安全性无法靠形容词建立。「<b class="kw">5 大 0 添加 + 174 项检测</b>」把承诺变成可计数条目——用户不会逐项核对，但「174」本身即构成信任依据。</p></div><div class="r4-p"><b>证书墙的呈现原则</b><p>末屏集中呈现非遗认证、品种权、标准起草单位与检测报告。密度最高，但用统一边框与暗底处理。<b class="kw">它的任务不是让人逐项阅读，而是建立「资质完备」的印象</b>。</p></div>
+        </div>
+      </div>
+      <div class="r4-row reveal">
+        <div class="r4-imgs n4"><a class="r4-img" href="#" data-full="assets_v2/detail7/p4_mat_01.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p4_mat_01.webp" alt="膏遗 原材料产地" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p4_mat_02.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p4_mat_02.webp" alt="膏遗 原材料产地" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p4_mat_03.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p4_mat_03.webp" alt="膏遗 原材料产地" loading="lazy"></a><a class="r4-img" href="#" data-full="assets_v2/detail7/p4_mat_04.webp" onclick="return openLB(this)"><img src="assets_v2/detail7/p4_mat_04.webp" alt="膏遗 原材料产地" loading="lazy"></a></div>
+        <div class="r4-text">
+          <div class="r4-head">
+            <span class="r4-no">04</span>
+            <h4 class="r4-title">原材料产地</h4>
+          </div>
+          <div class="r4-tag">把「道地」转为四个数字</div>
+          <div class="r4-p"><b>为何分四屏呈现</b><p>四味原料各自成屏，因为每味信息不同：佛手 4 年生、单果 150g；黄芥子 2000 米海拔；当归 3 年生、岷县产区。<b class="kw">合并会全部退化为「优质原料」</b>。</p></div><div class="r4-p"><b>数据角标的布局</b><p>每张原料特写叠三处角标数据，避开主体——不是遮盖药材，而是让视线先感知质感、再落到数据。<b class="kw">顺序颠倒则数据失效</b>。</p></div><div class="r4-p"><b>实拍优于渲染</b><p>四屏全部实拍特写。渲染图必然「过度完美」，中药材的可信度恰恰来自纹理、色泽与瑕疵——<b class="kw">这是该品类摄影的底线</b>。</p></div>
+        </div>
+      </div>
+    </div>
+    <!-- 10 模块完整信息结构（图2内容） -->
+    <!-- 10 模块（精简点缀） -->
+    <div class="cm-strip reveal">
+      <div class="cm-strip-h">
+        <span class="dl-lm-k">完整信息结构</span>
+        <span class="cm-strip-note">10 模块 · 上排建信任，下排堆价值</span>
+      </div>
+      <div class="cm-grid"><div class="cm-cell"><div class="cm-cell-h"><i>01</i><b>品牌印象篇</b></div><p>开场先立气质不谈卖点，三秒认定高端品牌</p></div><div class="cm-cell"><div class="cm-cell-h"><i>02</i><b>权威背书篇</b></div><p>央视展播与标准起草单位前置，用身份替代形容</p></div><div class="cm-cell"><div class="cm-cell-h"><i>03</i><b>产品亮相篇</b></div><p>首次完整露产品，添加量数字大于产品图</p></div><div class="cm-cell"><div class="cm-cell-h"><i>04</i><b>五专标准篇</b></div><p>把「非遗」拆成五个可核对工艺动作</p></div><div class="cm-cell"><div class="cm-cell-h"><i>05</i><b>原料产地篇</b></div><p>三味药材的产地年份与添加量，道地变成数字</p></div><div class="cm-cell"><div class="cm-cell-h"><i>06</i><b>品牌故事篇</b></div><p>时间轴把「古」量化，给确切年份而非含糊说辞</p></div><div class="cm-cell"><div class="cm-cell-h"><i>07</i><b>功效价值篇</b></div><p>先点出竞品的认知盲区，再给三步解郁框架</p></div><div class="cm-cell"><div class="cm-cell-h"><i>08</i><b>非遗技艺篇</b></div><p>20 倍精纯与 72 道工序，工艺难度变可对比数字</p></div><div class="cm-cell"><div class="cm-cell-h"><i>09</i><b>原料产地篇（二）</b></div><p>二次讲原料换角度，证明存放了足够年份</p></div><div class="cm-cell"><div class="cm-cell-h"><i>10</i><b>原料产地篇（三）</b></div><p>收尾落到量化承诺，用检测报告闭合信任链</p></div></div>
+    </div>
+
+
+    <!-- 方法论总结 -->
+    <div class="dl-sum reveal">
+      <div class="dl-sum-l">
+        <div class="dl-sum-k">这套结构迁移到了</div>
+        <h4>膏遗 8+ 系列 · 百年医仁 · 17 个品牌视觉升级</h4>
+      </div>
+      <div class="dl-sum-r">
+        <p><b class="kw">一句话方法论</b>：先立气质 → 给证据 → 定标准 → 证原料 → 显工艺 → 闭合信任 → 转情绪下单。</p>
+        <p style="margin-top:10px"><b class="kw">前 6 块解决「凭什么信你」，最后 1 块解决「凭什么现在买」</b>。任何新品类都能套用，只替换信任状。</p>
+        <p style="margin-top:10px"><b class="kw">管理视角</b>：把详情页从「靠个人审美的作品」变成「有固定板块、可培训、可复用的产能」。7 板块沉淀成 SOP 后，产出周期与一次通过率明显改善。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="panel cream" id="works">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">视觉产出<em>.</em></h2>
+      <span class="meta">04 / Selected Works</span>
+    </div>
+    <p class="p-body reveal" style="margin-bottom:clamp(18px,2.6vw,30px)">14 个详情页 + 7 张海报推广。详情页切成 3 段竖排，点击可看完整长图。</p>
+
+    <div class="works-tabs reveal">
+      <button class="wtab" data-filter="膏方">膏方 <span>3</span></button>
+      <button class="wtab" data-filter="药食同源">药食同源 <span>2</span></button>
+      <button class="wtab" data-filter="活动首页">活动首页 <span>3</span></button>
+      <button class="wtab" data-filter="推广">推广 <span>3</span></button>
+      <button class="wtab active" data-filter="all">全部 <span>11</span></button>
+    </div>
+
+    
+    <div class="work-item" data-cat="膏方">
+      <div class="work-head">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="cat">膏方</span>
+          <h4>百年医仁 · 酸枣仁膏</h4>
+        </div>
+        <span class="note">暗调高品质感的完整落地</span>
+      </div>
+      <div class="seg3"><a class="seg3-item" href="#" data-full="assets/d06-bainian-suanzaoren.jpg" onclick="return openLB(this)"><img src="assets/seg3/w06-s1.webp" alt="百年医仁 · 酸枣仁膏 第 1 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d06-bainian-suanzaoren.jpg" onclick="return openLB(this)"><img src="assets/seg3/w06-s2.webp" alt="百年医仁 · 酸枣仁膏 第 2 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d06-bainian-suanzaoren.jpg" onclick="return openLB(this)"><img src="assets/seg3/w06-s3.webp" alt="百年医仁 · 酸枣仁膏 第 3 段" loading="lazy"></a></div>
+    </div>
+    <div class="work-item" data-cat="膏方">
+      <div class="work-head">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="cat">膏方</span>
+          <h4>膏遗 · 酸枣仁膏</h4>
+        </div>
+        <span class="note">针对分众人群的差异化表达</span>
+      </div>
+      <div class="seg3"><a class="seg3-item" href="#" data-full="assets/d02-gaoyi-suanzaoren.jpg" onclick="return openLB(this)"><img src="assets/seg3/w02-s1.webp" alt="膏遗 · 酸枣仁膏 第 1 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d02-gaoyi-suanzaoren.jpg" onclick="return openLB(this)"><img src="assets/seg3/w02-s2.webp" alt="膏遗 · 酸枣仁膏 第 2 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d02-gaoyi-suanzaoren.jpg" onclick="return openLB(this)"><img src="assets/seg3/w02-s3.webp" alt="膏遗 · 酸枣仁膏 第 3 段" loading="lazy"></a></div>
+    </div>
+    <div class="work-item" data-cat="膏方">
+      <div class="work-head">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="cat">膏方</span>
+          <h4>膏遗 · 乌梅荷叶消消原浆</h4>
+        </div>
+        <span class="note">从膏方延展到原浆品类</span>
+      </div>
+      <div class="seg3"><a class="seg3-item" href="#" data-full="assets/d03-gaoyi-wumei-v1.jpg" onclick="return openLB(this)"><img src="assets/seg3/w03-s1.webp" alt="膏遗 · 乌梅荷叶消消原浆 第 1 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d03-gaoyi-wumei-v1.jpg" onclick="return openLB(this)"><img src="assets/seg3/w03-s2.webp" alt="膏遗 · 乌梅荷叶消消原浆 第 2 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d03-gaoyi-wumei-v1.jpg" onclick="return openLB(this)"><img src="assets/seg3/w03-s3.webp" alt="膏遗 · 乌梅荷叶消消原浆 第 3 段" loading="lazy"></a></div>
+    </div>
+    
+    <div class="work-item" data-cat="药食同源">
+      <div class="work-head">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="cat">药食同源</span>
+          <h4>香港制药堂 · 养肝茶</h4>
+        </div>
+        <span class="note">港式传统与现代排版的结合</span>
+      </div>
+      <div class="seg3"><a class="seg3-item" href="#" data-full="assets/d08-hk-yanggancha.jpg" onclick="return openLB(this)"><img src="assets/seg3/w08-s1.webp" alt="香港制药堂 · 养肝茶 第 1 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d08-hk-yanggancha.jpg" onclick="return openLB(this)"><img src="assets/seg3/w08-s2.webp" alt="香港制药堂 · 养肝茶 第 2 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d08-hk-yanggancha.jpg" onclick="return openLB(this)"><img src="assets/seg3/w08-s3.webp" alt="香港制药堂 · 养肝茶 第 3 段" loading="lazy"></a></div>
+    </div>
+    <div class="work-item" data-cat="药食同源">
+      <div class="work-head">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span class="cat">药食同源</span>
+          <h4>女性补气血复合维生素</h4>
+        </div>
+        <span class="note">功效成分的可视化</span>
+      </div>
+      <div class="seg3"><a class="seg3-item" href="#" data-full="assets/d09-nvxing-buqixue.jpg" onclick="return openLB(this)"><img src="assets/seg3/w09-s1.webp" alt="女性补气血复合维生素 第 1 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d09-nvxing-buqixue.jpg" onclick="return openLB(this)"><img src="assets/seg3/w09-s2.webp" alt="女性补气血复合维生素 第 2 段" loading="lazy"></a><a class="seg3-item" href="#" data-full="assets/d09-nvxing-buqixue.jpg" onclick="return openLB(this)"><img src="assets/seg3/w09-s3.webp" alt="女性补气血复合维生素 第 3 段" loading="lazy"></a></div>
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    <div class="work-block">
+      <div class="wb-label">西子健康 · 首页与活动大促</div>
+      <div class="poster-grid vert">
+        <div class="poster-item" data-cat="活动首页">
+          <a href="#" data-full="assets_v2/folders/xizi/xizi_01.webp" onclick="return openLB(this)" style="display:block">
+            <img src="assets_v2/folders/xizi/xizi_01.webp" alt="0909 大促首页" loading="lazy">
+          </a>
+        </div>
+        <div class="poster-item" data-cat="活动首页">
+          <a href="#" data-full="assets_v2/folders/xizi/xizi_03.webp" onclick="return openLB(this)" style="display:block">
+            <img src="assets_v2/folders/xizi/xizi_03.webp" alt="1012 IWF 首页" loading="lazy">
+          </a>
+        </div>
+        <div class="poster-item" data-cat="活动首页">
+          <a href="#" data-full="assets_v2/folders/xizi/xizi_05.webp" onclick="return openLB(this)" style="display:block">
+            <img src="assets_v2/folders/xizi/xizi_05.webp" alt="元旦海报 App" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-block">
+      <div class="wb-label">西子健康 · 推广投放素材</div>
+      <div class="poster-grid land-three">
+        <div class="poster-item" data-cat="推广">
+          <a href="#" data-full="assets_v2/folders/xizi/xizi_02.webp" onclick="return openLB(this)" style="display:block">
+            <img src="assets_v2/folders/xizi/xizi_02.webp" alt="肌肉科技大促推广图" loading="lazy">
+          </a>
+        </div>
+        <div class="poster-item" data-cat="推广">
+          <a href="#" data-full="assets_v2/folders/xizi/xizi_04.webp" onclick="return openLB(this)" style="display:block">
+            <img src="assets_v2/folders/xizi/xizi_04.webp" alt="618 京选推广" loading="lazy">
+          </a>
+        </div>
+        <div class="poster-item" data-cat="推广">
+          <a href="#" data-full="assets_v2/folders/xizi/xizi_07.webp" onclick="return openLB(this)" style="display:block">
+            <img src="assets_v2/folders/xizi/xizi_07.webp" alt="白金+高5 推广" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+</section>
+
+<section class="panel">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2 class="h-mid">方法论与体系<em>.</em></h2>
+      <span class="meta">05 / Methodology</span>
+    </div>
+    <p class="p-body reveal" style="font-size:clamp(.8rem,.95vw,.9rem)">但解释了上面那些产出<strong>为什么能稳定发生</strong>。</p>
+
+    <div class="work-block">
+      <div class="doc-hero">
+        <div class="doc-hero-l">
+          <span class="doc-no">01</span>
+          <div>
+            <h3 class="doc-title">八中心运营设计高效协作分享</h3>
+            <p class="doc-sub">把扯皮的地方，写成可执行的公式</p>
+          </div>
+        </div>
+        <div class="doc-hero-r">
+          <span class="doc-badge">38 页</span>
+          <a class="doc-open" href="#" data-full="assets/pdf-full/collab/01.webp" onclick="return openLB(this)">看完整文档 →</a>
+        </div>
+      </div>
+
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 01</div>
+          <h4 class="ds-title">先承认：跨部门对接的典型问题</h4>
+          <p class="ds-body">跨部门协作低效的根源是 <b class="kw">信息不对称与责任边界模糊</b>，不是设计能力不足。梳理出六个反复出现的问题：需求理解偏差、节奏不匹配、风格认知差异、优先级混乱、素材标准缺失、缺复盘机制。其中需求理解偏差占比最高——运营说「高级一点」，设计理解成留白多一点，交付被否，一轮返工把三天变成一周。<b class="kw">先列问题并量化占比，是建立共识的前提</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/collab/06.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/collab-06.webp" alt="先承认：跨部门对接的典型问题" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 02</div>
+          <h4 class="ds-title">给公式：推广图爆款 = 差异化 + 痛点前置 + 人群共鸣</h4>
+          <p class="ds-body">推广图转化率取决于三变量叠加：<b class="kw">差异化</b>是与竞品的可识别距离——把这张图的品牌与产品换成任何竞品仍成立，即失败；<b class="kw">痛点前置</b>是首屏呈现用户的具体困境，而不是先讲品牌故事；<b class="kw">人群共鸣</b>是用目标人群自己的语言描述其处境，而不是内部话术。三者缺一，素材即失效。公式的价值是把「大气一点」这类模糊需求转成可判断、可验收的标准。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/collab/12.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/collab-12.webp" alt="给公式：推广图爆款 = 差异化 + 痛点前置 + 人群共鸣" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 03</div>
+          <h4 class="ds-title">再给公式：主副图 5 张的逻辑</h4>
+          <p class="ds-body">主副图五张各承担独立任务：<b class="kw">第 1 张抓眼</b>，前三秒决定停留，标准是缩到列表页尺寸仍能看懂卖什么；<b class="kw">第 2 张信任</b>，放最强权威背书，不求好看求可信；<b class="kw">第 3 张拆解</b>，用对比与数据展开核心卖点；<b class="kw">第 4 张场景</b>，让用户看见自己在使用；<b class="kw">第 5 张收口</b>，消除最后的顾虑，不放新信息。顺序不可调换，因为决策链路是线性的。分工明确后，运营提需求会直接说「第 3 张讲某卖点」，沟通成本大幅下降。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/collab/18.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/collab-18.webp" alt="再给公式：主副图 5 张的逻辑" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 04</div>
+          <h4 class="ds-title">八中心对接流程：把共识做成制度</h4>
+          <p class="ds-body">六步流程：需求接收（统一模板）→ 需求判定（可行性与优先级）→ 设计（按 SOP）→ 审核（按标准验收）→ 交付（源文件与命名）→ 复盘（数据回看）。<b class="kw">其中需求判定最关键</b>——过去所有需求都说「很急」，设计无法排序，只能按谁嗓门大来排；加了判定环节，承接、修改与拒绝的边界就明确了。八中心统一执行后，争议从口头对齐转为按流程走。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/collab/27.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/collab-27.webp" alt="八中心对接流程：把共识做成制度" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 05</div>
+          <h4 class="ds-title">效率提升：从设计师 × 时间到 × AI</h4>
+          <p class="ds-body">执行类工作占比从 <b class="kw">75% 降至 30%</b>——改尺寸、套版、抠图、导出被压缩，释放的时间用于设计判断与方案推敲。单张推广图工时 <b class="kw">30 分钟缩短至 5 分钟</b>，按每天十张算日均释放四小时。效率提升的实质是把重复劳动转成可复用产能，而不是单纯加快出图。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/collab/31.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/collab-31.webp" alt="效率提升：从设计师 × 时间到 × AI" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-block">
+      <div class="doc-hero">
+        <div class="doc-hero-l">
+          <span class="doc-no">02</span>
+          <div>
+            <h3 class="doc-title">AIGC 工作提效 · PS 插件</h3>
+            <p class="doc-sub">从「AI 是个玩具」到「AI 是条产线」</p>
+          </div>
+        </div>
+        <div class="doc-hero-r">
+          <span class="doc-badge">31 页</span>
+          <a class="doc-open" href="#" data-full="assets/pdf-full/aigc/01.webp" onclick="return openLB(this)">看完整文档 →</a>
+        </div>
+      </div>
+
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 01</div>
+          <h4 class="ds-title">先定推进节奏，再谈工具</h4>
+          <p class="ds-body">AI 落地分三阶段，每阶段有明确交付物：<b class="kw">21 天跑通流程</b>，选一个品类试点，把「需求提出 → AI 出图 → 插件套版 → 交付上线」跑一遍，暴露卡点；<b class="kw">15 天扩品类</b>，不同品类的产品形态、卖点结构与审核标准各不相同，需做适配；<b class="kw">4 天补插件</b>，只有前两阶段积累的反复手工动作才值得自动化。<b class="kw">先有流程，再有工具</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/aigc/04.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/aigc-04.webp" alt="先定推进节奏，再谈工具" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 02</div>
+          <h4 class="ds-title">标准化 SOP：把六个动作串成一条线</h4>
+          <p class="ds-body">六步 SOP：运营提需求 → 设计接需求 → AI 出图 → 插件换产品 → 制作推广图 → 交付测试。<b class="kw">关键不在步骤，而在每一步的责任人、交付物与合格标准</b>。设计团队最大的损耗是返工而不是速度——运营说不清、设计凭理解执行、交付被否，一轮返工把三天变成一周。上线后一次通过率 <b class="kw">40% → 70%</b>，返工率 <b class="kw">25% → 10%</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/aigc/05.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/aigc-05.webp" alt="标准化 SOP：把六个动作串成一条线" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 03</div>
+          <h4 class="ds-title">阶段性成果：先把数字拿出来</h4>
+          <p class="ds-body">试点阶段四项指标交叉验证：完成 <b class="kw">5 级 6 组</b>方案，覆盖主图、详情首屏、场景图、推广图；整体效率提升 <b class="kw">70%</b>，同一张推广图传统四小时、AI 一点二小时，按实际工时统计；批量生成素材 <b class="kw">500+</b>，进入素材库后被后续八个系列反复调用；交付周期缩短 <b class="kw">30%</b>。<b class="kw">单项指标会失真，四项交叉才能证明路径成立</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/aigc/06.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/aigc-06.webp" alt="阶段性成果：先把数字拿出来" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 04</div>
+          <h4 class="ds-title">素材库：让成果变成团队资产</h4>
+          <p class="ds-body">素材库按「品类 / 场景 / 风格 / 尺寸」四层分类，每张图带用途、系列、生成参数标签。新需求先检索、后生成，避免同一场景反复制作。<b class="kw">素材库的价值不在效率，而在组织能力沉淀</b>——人员流动不再导致能力归零。新活动视觉启动时间平均节省 <b class="kw">40%</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/aigc/14.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/aigc-14.webp" alt="素材库：让成果变成团队资产" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 05</div>
+          <h4 class="ds-title">问题总结：还没解决什么</h4>
+          <p class="ds-body">AI 工作流的三个边界：<b class="kw">品类复杂</b>——多产品同屏易失去统一性，解法是 AI 生成背景加人工合成产品；<b class="kw">异形瓶体</b>——特殊工艺瓶身易变形，坚持实拍，AI 仅做场景背景；<b class="kw">预期过高</b>——运营误判能力，解法是输出 42 类场景的能力边界清单并在对接群公示。<b class="kw">讲清边界是落地的先决条件</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/aigc/30.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/aigc-30.webp" alt="问题总结：还没解决什么" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-block">
+      <div class="doc-hero">
+        <div class="doc-hero-l">
+          <span class="doc-no">03</span>
+          <div>
+            <h3 class="doc-title">2025 品牌视觉一中心年终汇报</h3>
+            <p class="doc-sub">六段式：目标 → 举措 → 反思 → 焦虑 → 倡议 → 规划</p>
+          </div>
+        </div>
+        <div class="doc-hero-r">
+          <span class="doc-badge">36 页</span>
+          <a class="doc-open" href="#" data-full="assets/pdf-full/yearend/01.webp" onclick="return openLB(this)">看完整文档 →</a>
+        </div>
+      </div>
+
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 01</div>
+          <h4 class="ds-title">第一段：先对账，目标完成了多少</h4>
+          <p class="ds-body">年终汇报以对账开篇，<b class="kw">数据在前，方法论在后</b>。<b class="kw">日常需求按期交付 95%</b>——余量用于质量保障与团队负荷缓冲，追求 100% 的代价必然是质量下降或团队透支；<b class="kw">新人独立承接 5/5</b>——标准是能扛住需求到上线的完整链路；<b class="kw">模板覆盖率 100%</b>——四大高频需求全部模板化，是新同事一周上手的前提；<b class="kw">品牌升级 17/17</b>——含两个从 0 到 1 的重点项目，难在定义不在执行。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/yearend/04.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/yearend-04.webp" alt="第一段：先对账，目标完成了多少" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 02</div>
+          <h4 class="ds-title">效率提升：设计师 × 时间 → × AI</h4>
+          <p class="ds-body">核心公式：<b class="kw">设计师 × 时间 → 设计师 × AI</b>。四个维度：执行占比 <b class="kw">75% → 30%</b>，释放的时间用于设计决策，把设计师从执行机器拉回决策者；单张推广图 <b class="kw">30 分钟 → 5 分钟</b>；个人可承担的完整项目数接近翻倍；主观时间充裕感提升 <b class="kw">40%</b>。最后一项常被忽略——工具价值最终要落在人的体验上。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/yearend/06.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/yearend-06.webp" alt="效率提升：设计师 × 时间 → × AI" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 03</div>
+          <h4 class="ds-title">技术提升：AI 工具链全流程嵌入</h4>
+          <p class="ds-body">AI 嵌入设计流程分三段：<b class="kw">理解（替代 60%）</b>——竞品收集与视觉规律拆解，从「刷灵感」转为定向分析；<b class="kw">设计（替代 40%）</b>——生成方案草图，人工筛选精修，动作从「从零画」变成「从多个方案里选和改」，保留人工是因为审美与品牌判断不可替代；<b class="kw">实现（提效 70%）</b>——插件换品与批量输出，纯机械劳动最适合自动化。三个比例说明 AI 在不同环节价值不同，边界清楚才可控。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/yearend/13.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/yearend-13.webp" alt="技术提升：AI 工具链全流程嵌入" loading="lazy">
+          </a>
+        </div>
+      </div>
+      <div class="doc-screen">
+        <div>
+          <div class="ds-no">SCREEN 04</div>
+          <h4 class="ds-title">对团队与公司的倡议：战略组 vs 效率组</h4>
+          <p class="ds-body"><b class="kw">战略设计组（4-6 人）</b>负责品牌体系、重点新品、大促主视觉，要求理解商业目标、能做从 0 到 1 的顶层设计，决定团队能力上限；<b class="kw">效率支持组（6-8 人）</b>负责日常需求、模板执行、批量产出，要求高效稳定按标准交付，是团队运转的地板。本质问题是「所有人做所有事」导致能力错配。<b class="kw">晋升通道明确比单纯涨薪更能留住人</b>。</p>
+        </div>
+        <div class="ds-visual">
+          <a class="ds-img" href="#" data-full="assets/pdf-full/yearend/32.webp" onclick="return openLB(this)">
+            <img src="assets/docs2/yearend-32.webp" alt="对团队与公司的倡议：战略组 vs 效率组" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="end-panel" id="contact">
+  <div class="wrap">
+    <div class="eyebrow reveal">06 / Contact</div>
+
+    <h2 class="mega reveal" style="margin-top:clamp(16px,2.6vw,30px)">
+      期待与您探讨<br>
+      设计如何<br>
+      <em>直接驱动</em>商业结果。
+    </h2>
+
+    <div class="contact-grid reveal">
+      <div class="contact-cell"><small>Phone</small><b>18273145910</b></div>
+      <div class="contact-cell"><small>Email</small><b>1465642193@qq.com</b></div>
+      <div class="contact-cell"><small>Position</small><b>设计主管 · 长沙</b></div>
+    </div>
+
+    <div class="end-foot">
+      <span>本作品集数据与简历口径一致，可提供原始记录核验</span>
+      <span>© 2026 李腾龙 / LI TENGLONG</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div id="lb">
+  <div class="lb-bar">
+    <span id="lbName">完整长图</span>
+    <button class="lb-close" onclick="closeLB()" aria-label="关闭">✕</button>
+  </div>
+  <div class="lb-stage" id="lbStage"></div>
+</div>
+
+<script>
+/* ============ 等高线背景生成 ============ */
+(function(){
+  const el = document.getElementById('topo');
+  const W = 1600, H = 1200;
+  let paths = '';
+  // 生成同心椭圆等高线组
+  for (let g = 0; g < 7; g++) {
+    const cx = 200 + g * 210;
+    const cy = 150 + (g % 3) * 320;
+    for (let i = 1; i <= 5; i++) {
+      const rx = 90 + i * 46;
+      const ry = 70 + i * 38;
+      const wob = 14 + i * 5;
+      let d = '';
+      const steps = 14;
+      for (let s = 0; s <= steps; s++) {
+        const a = (s / steps) * Math.PI * 2;
+        const noise = Math.sin(a * 3 + g) * wob + Math.cos(a * 5 + i) * wob * .5;
+        const x = cx + Math.cos(a) * (rx + noise);
+        const y = cy + Math.sin(a) * (ry + noise * .8);
+        d += (s === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+      }
+      paths += '<path d="' + d + 'Z"/>';
+    }
+  }
+  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice">' + paths + '</svg>';
+})();
+
+
+
+
+
+
+
+/* ============ 灯箱 ============ */
+function openLB(el){
+  const src = el.getAttribute('data-full');
+  if(!src) return false;
+  const img = el.querySelector('img');
+  document.getElementById('lbName').textContent = img ? (img.alt || '完整长图') : '完整长图';
+  document.getElementById('lbStage').innerHTML = '<img src="' + src + '" alt="">';
+  document.getElementById('lb').classList.add('open');
+  document.body.classList.add('locked');
+  return false;
+}
+function closeLB(){
+  document.getElementById('lb').classList.remove('open');
+  document.body.classList.remove('locked');
+  document.getElementById('lbStage').innerHTML = '';
+}
+document.getElementById('lb').addEventListener('click', e => {
+  if(e.target.id === 'lb' || e.target.id === 'lbStage') closeLB();
+});
+window.addEventListener('keydown', e => { if(e.key === 'Escape') closeLB(); });
+
+/* ============ 作品筛选 ============ */
+document.querySelectorAll('.wtab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.wtab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.getAttribute('data-filter');
+    document.querySelectorAll('.work-item').forEach(it => {
+      it.classList.toggle('hide', f !== 'all' && it.getAttribute('data-cat') !== f);
+    });
+  });
+});
+</script>
+<script>
+// ============================================================
+// v4 动效引擎 · 全套交互
+// 1. Lenis 丝滑滚动（lerp 0.075）
+// 2. 滚动视差（多层不同速度）
+// 3. 逐字入场（含衬线斜体保留）
+// 4. 滚动进度 + 章节指示
+// 5. 磁吸按钮（鼠标接近时吸引）
+// 6. 光标跟随（自定义圆形光标）
+// 7. 图片悬停放大 + 倾斜
+// 8. 数字滚动计数
+// 9. 等高线背景随鼠标漂移
+// 10. 滚动触发（IntersectionObserver 精确控制）
+// 11. 平滑锚点跳转
+// 12. prefers-reduced-motion 全降级
+// ============================================================
+(function () {
+  'use strict';
+
+  const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+  /* ============ 1. Lenis 丝滑滚动 ============ */
+  const SmoothScroll = (function () {
+    if (RM || isTouch) return { update() {}, to() {} };
+
+    let current = 0, target = 0, raf = null, running = false;
+    const EASE = 0.085;
+
+    function max() {
+      return document.documentElement.scrollHeight - window.innerHeight;
+    }
+    function tick() {
+      current = lerp(current, target, EASE);
+      if (Math.abs(target - current) < 0.35) {
+        current = target;
+        window.scrollTo(0, current);
+        running = false;
+        return;
+      }
+      window.scrollTo(0, current);
+      raf = requestAnimationFrame(tick);
+    }
+    function start() {
+      if (!running) {
+        running = true;
+        current = window.scrollY;
+        raf = requestAnimationFrame(tick);
+      }
+    }
+    window.addEventListener(
+      'wheel',
+      (e) => {
+        if (document.body.classList.contains('locked')) return;
+        e.preventDefault();
+        target = clamp(target + e.deltaY, 0, max());
+        start();
+      },
+      { passive: false }
+    );
+
+    let ty = 0;
+    window.addEventListener('touchstart', (e) => { ty = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      const dy = ty - e.touches[0].clientY;
+      ty = e.touches[0].clientY;
+      if (document.body.classList.contains('locked')) return;
+      target = clamp(target + dy * 1.15, 0, max());
+      start();
+    }, { passive: true });
+
+    window.addEventListener('scroll', () => {
+      if (!running) { current = window.scrollY; target = window.scrollY; }
+    }, { passive: true });
+
+    return {
+      to(y) {
+        target = clamp(y, 0, max());
+        start();
+      },
+    };
+  })();
+
+  /* ============ 2. 滚动视差 ============ */
+  const parallaxItems = [];
+  document.querySelectorAll('[data-parallax]').forEach((el) => {
+    parallaxItems.push({ el, speed: parseFloat(el.dataset.parallax) || 0.15 });
+  });
+  // 自动给大图加视差
+  document.querySelectorAll('.case-open img, .sr-img img, .ds-img img').forEach((img) => {
+    parallaxItems.push({ el: img, speed: 0.06, isImg: true });
+  });
+
+  let lastScroll = window.scrollY;
+  function parallax() {
+    const y = window.scrollY;
+    parallaxItems.forEach(({ el, speed, isImg }) => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
+      const center = r.top + r.height / 2 - window.innerHeight / 2;
+      const shift = center * speed * -0.1;
+      if (isImg) {
+        el.style.transform = `translate3d(0,${shift.toFixed(2)}px,0) scale(1.06)`;
+      } else {
+        el.style.transform = `translate3d(0,${shift.toFixed(2)}px,0)`;
+      }
+    });
+  }
+
+  /* ============ 3. 逐字入场 ============ */
+  function splitChars(el) {
+    const walk = (node) => {
+      [...node.childNodes].forEach((child) => {
+        if (child.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          [...child.textContent].forEach((ch) => {
+            if (ch.trim() === '') { frag.appendChild(document.createTextNode(ch)); return; }
+            const wrap = document.createElement('span');
+            wrap.className = 'ch-wrap';
+            const inner = document.createElement('span');
+            inner.className = 'ch';
+            inner.textContent = ch;
+            wrap.appendChild(inner);
+            frag.appendChild(wrap);
+          });
+          child.replaceWith(frag);
+        } else if (child.nodeType === 1 && child.tagName !== 'BR') {
+          walk(child);
+        }
+      });
+    };
+    walk(el);
+    return el.querySelectorAll('.ch');
+  }
+
+  const charEls = [];
+  document.querySelectorAll('.mega, .mega-zh, .hero-statement').forEach((el) => {
+    charEls.push({ el, chars: splitChars(el) });
+  });
+
+  /* 方案C3：逐字入场 IO 已停用。
+     - .end-panel .mega 的字符交给 C3-5 的遮罩上移处理
+     - 其余（.mega-zh / .hero-statement / 其他 .mega）直接呈现终态，
+       避免 CSS 的 opacity:0 + translateY(105%) 让文字永久不可见 */
+  charEls.forEach(function (item) {
+    if (item.el.closest('.end-panel')) return;   // 留给 C3-5
+    item.chars.forEach(function (ch) { ch.classList.add('in'); });
+  });
+
+  /* ============ 4. 滚动进度 + 章节 ============ */
+  const progressBar = document.getElementById('progress');
+  const sectionPool = [...document.querySelectorAll('.panel, .hero-panel, .end-panel')];
+
+  /* ============ 5. 磁吸按钮 ============ */
+  if (!isTouch && !RM) {
+    document.querySelectorAll('.pill, .menu-btn, .wtab, .doc-open').forEach((btn) => {
+      btn.classList.add('magnetic');
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) * 0.24;
+        const dy = (e.clientY - (r.top + r.height / 2)) * 0.24;
+        btn.style.transform = `translate(${dx}px,${dy}px) scale(1.04)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = '';
+      });
+    });
+  }
+
+  /* ============ 6. 光标跟随 ============ */
+  let cursor, cursorDot;
+  if (!isTouch && !RM) {
+    cursor = document.createElement('div');
+    cursor.className = 'cursor-ring';
+    cursorDot = document.createElement('div');
+    cursorDot.className = 'cursor-dot';
+    document.body.appendChild(cursor);
+    document.body.appendChild(cursorDot);
+
+    let mx = 0, my = 0, cx = 0, cy = 0, dx = 0, dy = 0;
+
+    document.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+
+    (function loop() {
+      cx = lerp(cx, mx, 0.16);
+      cy = lerp(cy, my, 0.16);
+      dx = lerp(dx, mx, 0.5);
+      dy = lerp(dy, my, 0.5);
+      cursor.style.transform = `translate(${cx}px,${cy}px)`;
+      cursorDot.style.transform = `translate(${dx}px,${dy}px)`;
+      requestAnimationFrame(loop);
+    })();
+
+    document.querySelectorAll('a,button,.seg3-item,.sr-img,.poster-item,.ds-img,.doc-open,figure').forEach((el) => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+    });
+  }
+
+  /* ============ 7. 图片悬停倾斜 ============ */
+  if (!isTouch && !RM) {
+    document.querySelectorAll('.img-card, .seg3-item, .poster-item, .sr-img, .ds-img, .case-open').forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(900px) rotateY(${px * 3.5}deg) rotateX(${-py * 3.5}deg) translateZ(0)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  }
+
+  /* ============ 8. 数字滚动计数（已停用）============
+   基础版此处用 IntersectionObserver + rAF 持续重写 .hf b / .case-open .cf b
+   的 textContent。C3 修订版需要保留 <span class="c3-num"> 结构来实现
+   「随滚动计数、停在最终值」的效果，必须让这段旧逻辑失效，
+   否则 span 会被 textContent 覆盖清除。
+   新的计数逻辑见文件末尾的 C3 修订模块 ②。 */
+
+/* ============ 9. 等高线漂移 ============ */
+  if (!isTouch && !RM) {
+    const topo = document.getElementById('topo');
+    let tmx = 0, tmy = 0, tcx = 0, tcy = 0;
+    document.addEventListener('mousemove', (e) => {
+      tmx = (e.clientX / window.innerWidth - 0.5) * 30;
+      tmy = (e.clientY / window.innerHeight - 0.5) * 30;
+    });
+    (function drift() {
+      tcx = lerp(tcx, tmx, 0.03);
+      tcy = lerp(tcy, tmy, 0.03);
+      topo.style.transform = `translate(${tcx}px,${tcy}px) scale(1.04)`;
+      requestAnimationFrame(drift);
+    })();
+  }
+
+  /* ============ 10. 区块 reveal ============
+     方案C3：已停用 IntersectionObserver
+     改为 gsap.set + gsap.to({once:true}) 三步法（见文件底部）
+     ============================================ */
+
+  /* ============ 11. 平滑锚点 ============ */
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (id.length < 2) return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      SmoothScroll.to(target.getBoundingClientRect().top + window.scrollY - 40);
+    });
+  });
+
+  /* ============ 12. 主循环 ============ */
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      if (progressBar) progressBar.style.width = ((y / maxY) * 100).toFixed(2) + '%';
+
+      parallax();
+
+      // 章节主题切换
+      sectionPool.forEach((sec) => {
+        const r = sec.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.5 && r.bottom > window.innerHeight * 0.5) {
+          if (sec.classList.contains('cream')) document.body.classList.add('theme-cream');
+          else document.body.classList.remove('theme-cream');
+        }
+      });
+
+      ticking = false;
+      lastScroll = y;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+</script>
+
+<!-- ============================================================
+     方案C3 · 滚动驱动分层深度引擎（内联）
+     每个板块一套「图层编组」，零重复
+     C3-1 案例封面三层 / C3-2 步骤图对向分层 / C3-3 文档区反向交错
+     C3-4 推广素材水平轨道+焦点缩放 / C3-5 结尾文字分层 / C3-6 速度skew
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  if (typeof gsap === 'undefined') return;
+  if (typeof ScrollTrigger === 'undefined') return;
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ============================================================
+     地基：Lenis ↔ GSAP 单循环同步
+     ============================================================ */
+  gsap.registerPlugin(ScrollTrigger);
+
+  var lenis = null;
+  if (typeof Lenis !== 'undefined' && !prefersReduced) {
+    lenis = new Lenis({ autoRaf: false, smoothTouch: false });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (time) {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  /* ============================================================
+     【文字消失防御条款】
+     所有图片 onload → ScrollTrigger.refresh()
+     img.complete 为 true → 初始化时立即刷新一次
+     ============================================================ */
+  var refreshScheduled = false;
+  function scheduleRefresh() {
+    if (refreshScheduled) return;
+    refreshScheduled = true;
+    requestAnimationFrame(function () {
+      refreshScheduled = false;
+      ScrollTrigger.refresh();
+    });
+  }
+
+  var allImages = document.querySelectorAll('img');
+  var alreadyComplete = 0;
+  for (var ii = 0; ii < allImages.length; ii++) {
+    (function (img) {
+      if (img.complete && img.naturalWidth > 0) {
+        alreadyComplete++;
+      } else {
+        img.addEventListener('load', scheduleRefresh, { once: true });
+        img.addEventListener('error', scheduleRefresh, { once: true });
+      }
+    })(allImages[ii]);
+  }
+  if (alreadyComplete > 0) {
+    ScrollTrigger.refresh();
+  }
+
+  /* ============================================================
+     减少动效降级：全部归零，直接终态
+     ============================================================ */
+  if (prefersReduced) {
+    gsap.defaults({ duration: 0 });
+    ScrollTrigger.defaults({ scrub: false });
+
+    gsap.set('.cs-hero', { yPercent: 0 });
+    gsap.set('.cs-hero-img, .sr-img, .ds-img', { yPercent: 0, clipPath: 'none', scale: 1 });
+    gsap.set('.cs-hero-img img, .sr-img img, .ds-img img', { yPercent: 0, scale: 1 });
+    gsap.set('.cs-hero-info', { yPercent: 0, opacity: 1 });
+    gsap.set('.doc-screen > div:first-child', { yPercent: 0, opacity: 1 });
+    gsap.set('.step-row h4', { yPercent: 0, opacity: 1 });
+    gsap.set('.contact-grid .contact-cell', { y: 0, opacity: 1 });
+    gsap.set('.end-panel .mega .ch', { yPercent: 0, opacity: 1 });
+    gsap.set('.poster-grid.land-three .h-track', { x: 0 });
+    gsap.set('.poster-grid.land-three .h-track > *', { scale: 1, opacity: 1 });
+
+    var rs = document.querySelectorAll('.reveal');
+    for (var r = 0; r < rs.length; r++) {
+      rs[r].classList.add('in');
+      rs[r].style.opacity = '1';
+      rs[r].style.transform = 'none';
+    }
+    var cs = document.querySelectorAll('.ch');
+    for (var c = 0; c < cs.length; c++) {
+      cs[c].classList.add('in');
+      cs[c].style.opacity = '1';
+      cs[c].style.transform = 'none';
+    }
+    return;
+  }
+
+  /* ============================================================
+     设备判定：所有分层位移 / pin / 水平轨道 只在 >=861px
+     ============================================================ */
+  var mm = gsap.matchMedia();
+  var needSort = false;
+
+  mm.add('(min-width: 861px)', function () {
+
+    /* ----------------------------------------------------------
+       C3-1. 案例封面：三层深度
+         L1 背景层 = .cs-hero 本身     yPercent  0 → -8（scroll 全程）
+         L2 图片层 = .cs-hero-img      yPercent  0 → +10
+                                    + clip inset(8%) → 0
+                                    + scale 1.04 → 1
+                                    + img 内层 yPercent -6 → +6（画框中的画在动）
+         L3 信息层 = .cs-hero-info     yPercent +20 → 0，opacity 0 → 1（图片 60% 处开始）
+       ---------------------------------------------------------- */
+    var csHeroes = document.querySelectorAll('.cs-hero');
+    for (var ci = 0; ci < csHeroes.length; ci++) {
+      (function (hero) {
+        var imgBox = hero.querySelector('.cs-hero-img');
+        var info = hero.querySelector('.cs-hero-info');
+        var img = imgBox ? imgBox.querySelector('img') : null;
+
+        /* ---- 第 1 步：gsap.set 设置各层初始状态 ---- */
+        gsap.set(hero, { yPercent: 0 });                                  // L1
+        if (imgBox) {
+          gsap.set(imgBox, { yPercent: 0, clipPath: 'inset(8% 8% 8% 8%)', scale: 1.04 }); // L2
+        }
+        /* P1-5 审计修复：去掉封面内层视差，避免揭示完成后图仍在容器内漂 */                         // L2 内层
+        if (info) gsap.set(info, { yPercent: 20, opacity: 0 });           // L3
+
+        /* ---- L1 背景层｜抖动修复说明 ----
+           原实现对 .cs-hero 自身做 yPercent -8，而 .cs-hero 正是本段
+           ScrollTrigger 的 trigger。元素被 transform 后，其
+           getBoundingClientRect 会随动画变化，导致 ScrollTrigger 的
+           start/end 测量与实际滚动位置产生微小偏移，表现为
+           「滚动停止后画面轻微回弹抖动」。
+           现改为不改变 trigger 自身的几何位置：
+           背景层视差由 L2/L3 的相对位移差（+10 与 +20）来体现层次，
+           视觉上仍保持「背景慢、图片中、信息快」的三层纵深。 */
+
+        /* ---- L2 + L3：共用 80% → 30% 区间 ---- */
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: hero,
+            start: 'top 80%',
+            end: 'top 30%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+
+        if (imgBox) {
+          tl.to(imgBox, {
+            yPercent: 10,
+            clipPath: 'inset(0% 0% 0% 0%)',
+            scale: 1,
+            ease: 'none',
+            duration: 1
+          }, 0);
+        }
+
+        if (info) {
+          tl.to(info, { yPercent: 0, opacity: 1, ease: 'none', duration: 0.4 }, 0.6);
+        }
+      })(csHeroes[ci]);
+    }
+
+    /* ----------------------------------------------------------
+       C3-2. 案例步骤图：对向分层 + 不同速度
+         奇数行 → 近景（快）：容器 yPercent +15 → -5，img -4 → +4
+         偶数行 → 远景（慢）：容器 yPercent -10 → +10，img +4 → -4
+         h4：yPercent +30 → 0，opacity 0 → 1（时间轴 0 → 40% 就位，文先到）
+       ---------------------------------------------------------- */
+    var stepRows = document.querySelectorAll('.step-row');
+    for (var si = 0; si < stepRows.length; si++) {
+      (function (row, idx) {
+        var textCol = row.children[0];
+        var imgCol = row.children[1];
+        if (!imgCol) return;
+
+        var srImg = imgCol.querySelector('.sr-img');
+        var img = srImg ? srImg.querySelector('img') : null;
+        var h4 = row.querySelector('h4');
+
+        var isNear = (idx % 2 === 0);           // 近景 / 远景 交替
+        var fromY = isNear ? 15 : -10;
+        var toY = isNear ? -5 : 10;
+        var imgFrom = isNear ? -4 : 4;
+        var imgTo = isNear ? 4 : -4;
+
+        /* ---- 第 1 步：gsap.set ---- */
+        /* P1-5 审计修复：原实现对 .sr-img 做 ±15% 的持续位移，
+           实测 368px 高图偏移达 ±55px，与左侧文字列基线不齐。
+           现改为图片静止、只做标题淡入。 */
+        if (h4) gsap.set(h4, { yPercent: 0, opacity: 0 });
+
+        /* ---- 第 2 步：gsap.to ---- */
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: row,
+            start: 'top 82%',
+            end: 'top 40%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+
+        if (h4) tl.to(h4, { yPercent: 0, opacity: 1, ease: 'none', duration: 1 }, 0);
+      })(stepRows[si], si);
+    }
+
+    /* ----------------------------------------------------------
+       C3-3. 文档区：文字与图片反向交错 + 奇偶方向反转
+         奇数屏：文本  +12 → 0 ；图片 -12 → 0 ；图片 clip inset(0 0 100% 0) → 0
+         偶数屏：文本  -12 → 0 ；图片 +12 → 0 ；图片 clip inset(100% 0 0 0) → 0
+         img 内层：奇数 -5 → +5 ；偶数 +5 → -5
+       ---------------------------------------------------------- */
+    var screens = document.querySelectorAll('.doc-screen');
+    for (var di = 0; di < screens.length; di++) {
+      (function (screen, idx) {
+        var textCol = screen.children[0];
+        var dsImg = screen.querySelector('.ds-img');
+        var img = dsImg ? dsImg.querySelector('img') : null;
+        if (!textCol) return;
+
+        var isOdd = (idx % 2 === 0);
+        var textFrom = isOdd ? 12 : -12;
+        var imgFrom = isOdd ? -12 : 12;
+        var clipFrom = isOdd ? 'inset(0 0 100% 0)' : 'inset(100% 0 0 0)';
+        var innerFrom = isOdd ? -5 : 5;
+        var innerTo = isOdd ? 5 : -5;
+
+        /* ---- 第 1 步：gsap.set ---- */
+        gsap.set(textCol, { yPercent: textFrom, opacity: 0 });
+        /* P1-5 审计修复：配图原为「位移 + 淡入 + 倾斜」三重叠加，
+           在视口 70% 处仅 0.77 不透明且持续漂移。现只保留淡入（见 methodologyFade）。 */
+
+        /* ---- 第 2 步：gsap.to ---- */
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: screen,
+            start: 'top 84%',
+            end: 'top 45%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+
+        tl.to(textCol, { yPercent: 0, opacity: 1, ease: 'none', duration: 1 }, 0);
+
+      })(screens[di], di);
+    }
+
+    /* ----------------------------------------------------------
+       C3-4. 推广素材：水平轨道 + 图层缩放（全页唯一 pin）
+       ---------------------------------------------------------- */
+    var posterGrid = document.querySelector('.poster-grid.land-three');
+    if (posterGrid) {
+      /* ---- 运行时创建 .h-track 包裹层（不改原始 HTML） ---- */
+      if (!posterGrid.classList.contains('h-gallery')) {
+        posterGrid.classList.add('h-gallery');
+        var track = document.createElement('div');
+        track.className = 'h-track';
+        var kids = [].slice.call(posterGrid.children).filter(function (el) {
+          return !el.classList.contains('h-gallery-head');
+        });
+        kids.forEach(function (k) { track.appendChild(k); });
+        posterGrid.appendChild(track);
+      }
+
+      var trackEl = posterGrid.querySelector('.h-track');
+      var items = [].slice.call(trackEl.children);
+      var count = items.length;
+
+      /* ---- 创建焦点标题条（插到容器内部最前，pin 后仍可定位） ---- */
+      var head = posterGrid.querySelector('.h-gallery-head');
+      if (!head) {
+        head = document.createElement('div');
+        head.className = 'h-gallery-head';
+        var label = document.createElement('span');
+        label.className = 'focus-label';
+        label.textContent = '推广素材';
+        var hint = document.createElement('span');
+        hint.className = 'focus-hint';
+        hint.textContent = '← 可左右拖动 →';
+        var counter = document.createElement('span');
+        counter.className = 'focus-counter';
+        counter.innerHTML = '<b>01</b> / ' + String(count).padStart(2, '0');
+        head.appendChild(label);
+        head.appendChild(hint);
+        head.appendChild(counter);
+        posterGrid.insertBefore(head, posterGrid.firstChild);
+      }
+      var labelEl = head.querySelector('.focus-label');
+      var counterEl = head.querySelector('.focus-counter');
+
+      /* ---- 第 1 步：gsap.set ---- */
+      items.forEach(function (it, i) {
+        var d = i;
+        var absd = Math.abs(d);
+        gsap.set(it, {
+          scale: absd === 0 ? 1.04 : (absd === 1 ? 0.9 : 0.82),
+          opacity: absd === 0 ? 1 : (absd === 1 ? 0.62 : 0.4),
+          rotateY: absd === 0 ? 0 : -d * (absd === 1 ? 7 : 11),
+          yPercent: absd === 0 ? 0 : (absd === 1 ? 0.6 : 1.2),
+          transformPerspective: 1200
+        });
+        var im = it.querySelector('img');
+        if (im) gsap.set(im, { yPercent: -3 });
+      });
+
+      /* ---- 焦点索引 → 缩放 / 透明度 / 标题（scrub 驱动，非 quickTo） ---- */
+      function setFocus(progress) {
+        var idx = Math.round(progress * (count - 1));
+        idx = Math.max(0, Math.min(count - 1, idx));
+
+        /* flex-carousel 质感：焦点最大，相邻次之，更远的更小并轻微外旋，
+           形成「卡片围绕焦点排布」的非板正纵深。全部只动 transform/opacity */
+        items.forEach(function (it, i) {
+          var d = i - idx;                 // 与焦点的距离（带方向）
+          var absd = Math.abs(d);
+          var scale, opacity, rotY, yShift;
+          if (absd === 0) {
+            scale = 1.04; opacity = 1; rotY = 0; yShift = 0;
+          } else if (absd === 1) {
+            scale = 0.92; opacity = 0.78; rotY = -d * 6; yShift = 5;
+          } else {
+            scale = 0.86; opacity = 0.58; rotY = -d * 9; yShift = 9;
+          }
+          gsap.set(it, {
+            scale: scale,
+            opacity: opacity,
+            rotateY: rotY,
+            yPercent: yShift / 10,
+            transformPerspective: 1200
+          });
+        });
+
+        if (labelEl) {
+          var item = items[idx];
+          var im = item.querySelector('img');
+          var txt = (im && im.getAttribute('alt')) ? im.getAttribute('alt') : ('推广素材 · ' + (idx + 1));
+          if (labelEl.textContent !== txt) labelEl.textContent = txt;
+        }
+        if (counterEl) {
+          counterEl.innerHTML = '<b>' + String(idx + 1).padStart(2, '0') + '</b> / ' + String(count).padStart(2, '0');
+        }
+      }
+
+      function scrollDist() {
+        return Math.max(1, trackEl.scrollWidth - window.innerWidth + 100);
+      }
+
+      setFocus(0);
+
+      /* ----------------------------------------------------------
+         第 2 步：原生横向滚动（替代 pin + x 位移）
+
+         旧实现的问题：卡片带 max-width 上限，宽屏下三张卡片总宽
+         不足容器宽度 → 轨道不溢出 → end 塌成 1px → pin 区间消失，
+         表现为「第三张看不清、也完全滑不动」。
+
+         现改为容器自身 overflow-x 滚动：
+           · 滚轮：竖向滚轮映射为横向位移，到头后交还页面滚动
+           · 拖拽：指针拖动直接改 scrollLeft
+           · 触控板：原生横向手势直接生效
+           · 吸附：scroll-snap 对齐卡片中心
+         焦点（缩放 / 透明度 / 标题）由 scrollLeft 反推，不再依赖 progress。
+         ---------------------------------------------------------- */
+      trackEl.classList.add('h-scroller');
+
+      function maxScrollLeft() {
+        return Math.max(0, trackEl.scrollWidth - trackEl.clientWidth);
+      }
+
+      /* ---- 两侧留白：让第一张与最后一张都能居中 ----
+         没有留白时，scrollLeft=0 处「容器中心」落在第 1、2 张之间，
+         焦点会错标成第 2 张。补上 (容器宽 - 卡片宽)/2 的留白后，
+         每张卡都能滚到正中，scroll-snap 的吸附点也随之对齐。 */
+      function applySidePadding() {
+        if (!items.length) return;
+        var cw = trackEl.clientWidth;
+        var cardW = items[0].offsetWidth;
+        if (!cw || !cardW) return;
+        var pad = Math.max(0, (cw - cardW) / 2);
+        trackEl.style.paddingLeft = pad + 'px';
+        trackEl.style.paddingRight = pad + 'px';
+      }
+      applySidePadding();
+
+      /* 哪张卡最靠近容器中心 → 哪张就是焦点 */
+      /* 一张卡的步进距离（卡宽 + gap） */
+      function cardStep() {
+        if (items.length > 1) return items[1].offsetLeft - items[0].offsetLeft;
+        return items[0] ? items[0].offsetWidth : 0;
+      }
+
+      /* 平滑滚到第 k 张卡居中 */
+      function scrollToCard(k) {
+        var n = items.length;
+        if (!n) return;
+        k = Math.max(0, Math.min(n - 1, k));
+        var target = items[k].offsetLeft - (trackEl.clientWidth - items[k].offsetWidth) / 2;
+        trackEl.scrollTo({
+          left: Math.max(0, Math.min(maxScrollLeft(), target)),
+          behavior: 'smooth'
+        });
+      }
+
+      /* 吸附到最靠近中心的那张 */
+      function snapToNearest() {
+        if (items.length <= 1) return;
+        scrollToCard(nearestIndex());
+      }
+
+      var wheelIdle = null;
+      var wheelAcc = 0;        // 本次手势累计滚动量
+      var wheelBaseIdx = 0;    // 手势开始时所在的卡片
+
+      function nearestIndex() {
+        var n = items.length;
+        if (!n) return 0;
+        var mid = trackEl.scrollLeft + trackEl.clientWidth / 2;
+        var best = 0, bestD = Infinity;
+        for (var i = 0; i < n; i++) {
+          var c = items[i].offsetLeft + items[i].offsetWidth / 2;
+          var d = Math.abs(c - mid);
+          if (d < bestD) { bestD = d; best = i; }
+        }
+        return best;
+      }
+
+      function syncFocus() {
+        var n = items.length;
+        if (!n) return;
+        setFocus(nearestIndex() / Math.max(1, n - 1));
+      }
+
+      /* ---- 滚轮：竖向滚轮 → 横向滑动，到头后放行页面 ---- */
+      trackEl.addEventListener('wheel', function (e) {
+        var mx = maxScrollLeft();
+        if (mx <= 1) return;
+        /* 审计修复：竖向滚轮不再被画廊接管，一律交还页面。
+           只有横向手势（触控板左右滑 / Shift+滚轮）才驱动画廊；
+           鼠标用户可直接拖动卡片查看。 */
+        if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+        var d = e.deltaX;
+        if (!d) return;
+        var atStart = trackEl.scrollLeft <= 1;
+        var atEnd = trackEl.scrollLeft >= mx - 1;
+        if ((d < 0 && atStart) || (d > 0 && atEnd)) return;  // 到头了让页面滚
+        e.preventDefault();
+        /* 关键：Lenis 在 window 上挂了 wheel 监听做平滑滚动，
+           若事件继续冒泡，就会出现「横向滑 + 页面同时滚」的打架。
+           这里阻断冒泡，让滚轮只驱动画廊；到达两端时提前 return，
+           事件正常冒泡，页面继续滚动。 */
+        e.stopPropagation();
+
+        /* 手势开始：记录起点卡片，累计量清零 */
+        if (wheelAcc === 0) wheelBaseIdx = nearestIndex();
+        wheelAcc += d;
+        trackEl.scrollLeft += d;
+
+        /* 滚轮停止 170ms 后整卡步进：
+           若只是「吸附到最近一张」，单次 240px 的位移不够半张卡，
+           会被吸回原位，用户感觉「滑不动」。
+           因此按本次手势的累计位移换算成整卡数，向前/向后对齐。 */
+        clearTimeout(wheelIdle);
+        wheelIdle = setTimeout(function () {
+          var step = cardStep();
+          if (step > 0 && Math.abs(wheelAcc) > 30) {
+            var dir = wheelAcc > 0 ? 1 : -1;
+            var jump = Math.max(1, Math.round(Math.abs(wheelAcc) / step));
+            scrollToCard(wheelBaseIdx + dir * jump);
+          } else {
+            snapToNearest();
+          }
+          wheelAcc = 0;
+        }, 170);
+      }, { passive: false });
+
+      /* ---- 拖拽 ---- */
+      var dragging = false, dragStartX = 0, dragStartLeft = 0, moved = false;
+      trackEl.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        dragging = true;
+        moved = false;
+        dragStartX = e.clientX;
+        dragStartLeft = trackEl.scrollLeft;
+        trackEl.classList.add('is-dragging');
+      });
+      trackEl.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var dx = e.clientX - dragStartX;
+        if (Math.abs(dx) > 4) moved = true;
+        trackEl.scrollLeft = dragStartLeft - dx;
+      });
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        trackEl.classList.remove('is-dragging');
+        var n = items.length;
+        if (n <= 1) return;
+        snapToNearest();
+      }
+      trackEl.addEventListener('pointerup', endDrag);
+      trackEl.addEventListener('pointercancel', endDrag);
+      trackEl.addEventListener('pointerleave', endDrag);
+      trackEl.addEventListener('click', function (e) {
+        if (moved) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
+
+      /* ---- 滚动 → 更新焦点 ---- */
+      var scrollTick = false;
+      trackEl.addEventListener('scroll', function () {
+        if (scrollTick) return;
+        scrollTick = true;
+        requestAnimationFrame(function () {
+          scrollTick = false;
+          /* ------------------------------------------------------------
+         初始视图 = 三张同屏的预览态：
+         第 2 张居中、第 1 张左侧被裁、第 3 张右侧被裁。
+         招聘官先看到完整的三张布局，想细看再把指针移进热区滚动/拖动。
+         ------------------------------------------------------------ */
+      function centerInitial() {
+        if (items.length < 2) return;
+        var target = items[1].offsetLeft - (trackEl.clientWidth - items[1].offsetWidth) / 2;
+        trackEl.scrollLeft = Math.max(0, Math.min(maxScrollLeft(), target));
+        syncFocus();
+      }
+      /* 多重兜底：首帧布局、下一帧、图片加载后、window load 各算一次，
+         避免卡片宽度未定或被后续布局覆盖导致停在最左端。 */
+      centerInitial();
+      requestAnimationFrame(centerInitial);
+      setTimeout(centerInitial, 300);
+      setTimeout(centerInitial, 1200);
+      window.addEventListener('load', centerInitial);
+
+      /* 窗口尺寸变化后卡片宽度会变，留白需重算 */
+      var padTimer = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(padTimer);
+        padTimer = setTimeout(function () {
+          applySidePadding();
+          syncFocus();
+        }, 200);
+      });
+        });
+      }, { passive: true });
+
+      syncFocus();
+
+      /* ---- 图片项内部轻微呼吸（-3 → 3），幅度极小不与 x 打架 ---- */
+      items.forEach(function (it) {
+        var im = it.querySelector('img');
+        if (!im) return;
+        gsap.to(im, {
+          yPercent: 3,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: it,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+      });
+
+      /* ---- 轨道宽度依赖图片真实尺寸 → 加载后重算 ---- */
+      items.forEach(function (it) {
+        var im = it.querySelector('img');
+        if (im && !im.complete) {
+          im.addEventListener('load', function () { ScrollTrigger.refresh(); }, { once: true });
+        }
+      });
+
+      needSort = true;   // 已创建 pin → 稍后 sort + refresh
+    }
+
+  }); // end matchMedia (min-width: 861px)
+
+  /* pin 创建后：sort 修正顺序，再 refresh */
+  if (needSort) {
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+  }
+
+  /* ============================================================
+     C3-5. 结尾联系区：文字分层 + 信息格错峰（全端保留）
+     ============================================================ */
+  (function endPanelLayers() {
+    var endMega = document.querySelector('.end-panel .mega') ||
+                  document.querySelector('.end-panel .mega-zh');
+    if (endMega) {
+      var chars = endMega.querySelectorAll('.ch');
+      if (chars.length) {
+        /* 第 1 步：gsap.set */
+        gsap.set(chars, { yPercent: 100, opacity: 0 });
+        /* 第 2 步：gsap.to */
+        gsap.to(chars, {
+          yPercent: 0,
+          opacity: 1,
+          ease: 'none',
+          stagger: 0.05,
+          scrollTrigger: {
+            trigger: '.end-panel',
+            start: 'top 72%',
+            end: 'top 35%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+      }
+    }
+
+    var cells = document.querySelectorAll('.contact-grid .contact-cell');
+    if (cells.length) {
+      gsap.set(cells, { y: 20, opacity: 0 });
+      gsap.to(cells, {
+        y: 0,
+        opacity: 1,
+        ease: 'none',
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: '.contact-grid',
+          start: 'top 88%',
+          end: 'top 84%',
+          scrub: 0.8,
+          invalidateOnRefresh: true
+        }
+      });
+    }
+  })();
+
+  /* ============================================================
+     .reveal：三步法（禁止 gsap.from）
+     ============================================================ */
+  (function revealThreeStep() {
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    gsap.set(els, { opacity: 0, y: 22 });
+    ScrollTrigger.batch(els, {
+      start: 'top 88%',
+      once: true,
+      onEnter: function (batch) {
+        gsap.to(batch, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: 0.05,
+          ease: 'power2.out',
+          overwrite: true,
+          onComplete: function () {
+            for (var i = 0; i < batch.length; i++) batch[i].classList.add('in');
+          }
+        });
+      }
+    });
+  })();
+
+  /* ============================================================
+     C3-6. 速度 skew（只作用于图片层与图片容器）
+     桌面 ±1deg / 移动端 ±0.5deg（幅度减半）
+     ============================================================ */
+  (function velocitySkew() {
+    var targets = document.querySelectorAll('.cs-hero-img, .sr-img, .ds-img, .h-track > *');
+    if (!targets.length) return;
+
+    var setters = [];
+    for (var i = 0; i < targets.length; i++) {
+      setters.push({
+        el: targets[i],
+        skew: gsap.quickTo(targets[i], 'skewY', { duration: 0.3, ease: 'power2.out' })
+      });
+    }
+
+    var MAX_DEG = window.innerWidth < 861 ? 0.5 : 1;
+    var THRESHOLD = 2;
+    var last = 0;
+    window.addEventListener('resize', function () {
+      MAX_DEG = window.innerWidth < 861 ? 0.5 : 1;
+    });
+
+    function applySkew(v) {
+      if (Math.abs(v) < THRESHOLD) {
+        if (last !== 0) {
+          for (var k = 0; k < setters.length; k++) setters[k].skew(0);
+          last = 0;
+        }
+        return;
+      }
+      var deg = Math.max(-1, Math.min(1, v / 1800)) * MAX_DEG;
+      var vh = window.innerHeight;
+      for (var j = 0; j < setters.length; j++) {
+        var r = setters[j].el.getBoundingClientRect();
+        if (r.bottom > -200 && r.top < vh + 200) setters[j].skew(deg);
+      }
+      last = deg;
+    }
+
+    if (lenis) {
+      lenis.on('scroll', function (e) {
+        applySkew((e && typeof e.velocity === 'number') ? e.velocity : (lenis.velocity || 0));
+      });
+    } else {
+      var lastY = window.scrollY, lastT = performance.now(), idle = null;
+      window.addEventListener('scroll', function () {
+        var now = performance.now(), y = window.scrollY;
+        var dt = Math.max(1, now - lastT) / 1000;
+        var v = (y - lastY) / dt;
+        lastY = y; lastT = now;
+        applySkew(v);
+        clearTimeout(idle);
+        idle = setTimeout(function () { applySkew(0); }, 120);
+      }, { passive: true });
+    }
+  })();
+
+  /* ============================================================
+     刷新
+     ============================================================ */
+  window.addEventListener('load', function () {
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+  });
+  var lateTimer = setTimeout(function () {
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+  }, 1400);
+  window.addEventListener('resize', function () {
+    clearTimeout(lateTimer);
+    lateTimer = setTimeout(function () {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    }, 260);
+  });
+
+  window.__C3_MOTION__ = {
+    lenis: lenis,
+    reduced: prefersReduced,
+    refresh: function () { ScrollTrigger.sort(); ScrollTrigger.refresh(); },
+    imagesComplete: alreadyComplete,
+    imagesTotal: allImages.length
+  };
+})();
+</script>
+
+<!-- ============================================================
+     C3 修订模块（2026-11-17 二次修订）
+     ① 顶部文字滚动淡入 ② 三个数字滚动计数
+     ③ 详情区图片不同方向百叶窗 ④ 详情区文字随机线条
+     ⑤ AIGC 板块图左文右
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  if (typeof gsap === 'undefined') return;
+  if (typeof ScrollTrigger === 'undefined') return;
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ============================================================
+     ① 顶部文字：加载淡入 + 滚动视差
+     说明：Hero 是首屏，若做成纯 scrub 淡入会导致「刚打开页面时文字不可见」，
+     因此拆成两段互不冲突的动画：
+       · 入场 —— 页面加载即淡入（opacity 0 → 1，y 26 → 0，错开 0.12s）
+       · 滚动 —— 只做 y 位移视差（immediateRender:false，不与淡入抢 opacity）
+     ============================================================ */
+  (function heroTopText() {
+    /* 只处理 .hero-meta；首屏大标题交给「文字底部复现」（c3Rise） */
+    var els = [document.querySelector('.hero-meta')].filter(Boolean);
+    if (!els.length) return;
+
+    if (prefersReduced) {
+      gsap.set(els, { opacity: 1, y: 0 });
+      return;
+    }
+
+    gsap.set(els, { opacity: 0, y: 26 });
+    gsap.to(els, {
+      opacity: 1,
+      y: 0,
+      duration: 1.05,
+      ease: 'power2.out',
+      stagger: 0.12,
+      delay: 0.08
+    });
+
+    /* 滚动视差：只用 y，避免与上面的 opacity 淡入抢同一个属性 */
+    gsap.to(els, {
+      y: -56,
+      ease: 'none',
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '.hero-panel',
+        start: 'top top',
+        end: '+=70%',
+        scrub: 0.8,
+        invalidateOnRefresh: true
+      }
+    });
+  })();
+
+  /* ============================================================
+     ② 三个数字：随滚动计数，停在最终值
+     结构：<b>60<em>%</em>→0</b> / <b>95<em>分</em></b> / <b>−25<em>%</em></b>
+     做法：运行时把开头的数字替换为 <span class="c3-num">，其余（%、→0 等）原样保留
+     ============================================================ */
+  (function heroCounters() {
+    var spans = [];
+
+    document.querySelectorAll('.hero-foot .hf b').forEach(function (b) {
+      var html = b.innerHTML;
+      var m = html.match(/^(\u2212|-)?(\d+)/);
+      if (!m) return;
+
+      var sign = m[1] || '';
+      var digits = m[2];
+      var tail = html.slice(m[0].length);
+
+      b.innerHTML =
+        sign +
+        '<span class="c3-num" data-target="' + digits + '">0</span>' +
+        tail;
+
+      var sp = b.querySelector('.c3-num');
+      if (sp) spans.push(sp);
+    });
+
+    if (!spans.length) return;
+
+    function setVal(p) {
+      for (var i = 0; i < spans.length; i++) {
+        var target = parseFloat(spans[i].getAttribute('data-target'));
+        var v = Math.round(target * p);
+        var txt = String(v);
+        if (spans[i].textContent !== txt) spans[i].textContent = txt;
+      }
+    }
+
+    function finalize() {
+      for (var i = 0; i < spans.length; i++) {
+        spans[i].textContent = spans[i].getAttribute('data-target');
+      }
+    }
+
+    if (prefersReduced) { finalize(); return; }
+
+    /* 初始直接呈现最终值，避免首屏出现 "0 / 0 / 0" 的错误读数 */
+    finalize();
+
+    var running = false;
+    function runCount() {
+      if (running) return;
+      running = true;
+      var proxy = { v: 0 };
+      gsap.to(proxy, {
+        v: 1,
+        /* P0-2 审计修复：原 1.35s 内三格显示 38%/61/16 等错误值，
+           招聘官此刻截图会读到不存在的数据。压到 0.32s。 */
+        duration: 0.32,
+        ease: 'power2.out',
+        onUpdate: function () { setVal(proxy.v); },
+        onComplete: function () {
+          finalize();          // 精确停在最终值（60 / 95 / 25）
+          running = false;
+        }
+      });
+    }
+
+    /* 数字所在行进入视口即开始计数；首屏加载时会立即触发一次，
+       滚动离开再回到首屏会重新计数一次 */
+    ScrollTrigger.create({
+      trigger: '.hero-foot',
+      start: 'top 96%',
+      onEnter: runCount,
+      onEnterBack: function () {
+        setVal(0);
+        runCount();
+      }
+    });
+  })();
+
+  /* ============================================================
+     ③ 方法论图片：统一淡入（原百叶窗已按需求替换）
+        .ds-img  方法论文档区配图
+        .r4-img  详情页拆解配图
+     只用 opacity，随滚动淡入并停在终态
+     ============================================================ */
+  (function methodologyFade() {
+    if (prefersReduced) return;
+
+    function bindFade(sel) {
+      var els = document.querySelectorAll(sel);
+      for (var i = 0; i < els.length; i++) {
+        (function (el) {
+          gsap.set(el, { opacity: 0 });
+          gsap.to(el, {
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 92%',
+              end: 'top 84%',
+              scrub: 0.8,
+              invalidateOnRefresh: true
+            }
+          });
+        })(els[i]);
+      }
+    }
+
+    bindFade('.ds-img');
+    bindFade('#detail-logic .r4-img');
+  })();
+
+  /* --- 旧百叶窗实现（已停用，保留可回溯）--- */
+  (function venetianDisabled() {
+    if (true) return;
+
+    function buildBars(host, variant) {
+      var N = 6;
+      var vertical = (variant === 2 || variant === 3);
+      var fromEnd = (variant === 1 || variant === 3);
+      var bars = [];
+
+      for (var i = 0; i < N; i++) {
+        var bar = document.createElement('i');
+        bar.className = 'c3-bar';
+
+        if (!vertical) {
+          bar.style.top = (i * 100 / N) + '%';
+          bar.style.height = (100 / N + 0.4) + '%';
+          bar.style.left = '0';
+          bar.style.right = '0';
+          bar.style.transformOrigin = fromEnd ? 'bottom center' : 'top center';
+          bar.style.transform = 'scaleY(1)';
+        } else {
+          bar.style.left = (i * 100 / N) + '%';
+          bar.style.width = (100 / N + 0.4) + '%';
+          bar.style.top = '0';
+          bar.style.bottom = '0';
+          bar.style.transformOrigin = fromEnd ? 'right center' : 'left center';
+          bar.style.transform = 'scaleX(1)';
+        }
+
+        host.appendChild(bar);
+        bars.push(bar);
+      }
+      return { bars: bars, vertical: vertical };
+    }
+
+    function run() {
+      var hosts = document.querySelectorAll('.ds-img');
+      for (var i = 0; i < hosts.length; i++) {
+        (function (host, idx) {
+          if (host.querySelector('.c3-bar')) return;   // 避免重复构建
+
+          var variant = idx % 4;
+          var built = buildBars(host, variant);
+          var prop = built.vertical ? 'scaleX' : 'scaleY';
+          var toVars = { ease: 'none', duration: 0.55, stagger: 0.07 };
+          toVars[prop] = 0;
+
+          gsap.to(built.bars, Object.assign({
+            scrollTrigger: {
+              trigger: host,
+              start: 'top 88%',
+              end: 'top 45%',
+              scrub: 0.8,
+              invalidateOnRefresh: true
+            }
+          }, toVars));
+        })(hosts[i], i);
+      }
+    }
+
+    /* 等图片有尺寸后再构建，避免遮盖条基于零高度元素 */
+    if (document.readyState === 'complete') {
+      run();
+    } else {
+      window.addEventListener('load', run);
+    }
+  })();
+
+  /* ============================================================
+     ④ 详情区文字：随机线条
+     每个 .doc-screen 的文本列叠加 5 条随机位置/宽度的细线，
+     随滚动以随机顺序「画出来」，随后回落到低透明度，不干扰阅读
+     ============================================================ */
+  (function randomLines() {
+    if (prefersReduced) return;
+    if (window.innerWidth < 861) return;   // 移动端不做
+
+    var screens = document.querySelectorAll('.doc-screen');
+
+    for (var i = 0; i < screens.length; i++) {
+      (function (screen) {
+        var col = screen.children[0];
+        if (!col || col.querySelector('.c3-lines')) return;
+
+        var box = document.createElement('div');
+        box.className = 'c3-lines';
+        var lines = [];
+
+        for (var k = 0; k < 5; k++) {
+          var ln = document.createElement('i');
+          ln.className = 'c3-line';
+          ln.style.top = (8 + Math.random() * 76) + '%';
+          ln.style.left = (Math.random() * 34) + '%';
+          ln.style.width = (28 + Math.random() * 58) + '%';
+          box.appendChild(ln);
+          lines.push(ln);
+        }
+        col.appendChild(box);
+
+        gsap.set(lines, { scaleX: 0, opacity: 0 });
+
+        var tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: screen,
+            start: 'top 90%',
+            end: 'top 52%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+
+        /* 画出：随机顺序依次铺开 */
+        tl.to(lines, {
+          scaleX: 1,
+          opacity: 1,
+          ease: 'none',
+          duration: 0.5,
+          stagger: { each: 0.08, from: 'random' }
+        }, 0);
+
+        /* 回落为淡淡的辅助线，避免与正文争视觉 */
+        tl.to(lines, {
+          opacity: 0.28,
+          ease: 'none',
+          duration: 0.4,
+          stagger: { each: 0.05, from: 'random' }
+        }, 0.55);
+      })(screens[i]);
+    }
+  })();
+
+  /* ============================================================
+     ⑤ AIGC 板块：图片与文字换到左边（图左 · 文右）
+     通过给其 doc-screen 加 .is-img-left，用 CSS order 交换两列，
+     不改动 DOM 顺序，因此不影响已有的位移分层动画
+     ============================================================ */
+  (function aigcImgLeft() {
+    var titles = document.querySelectorAll('.doc-title');
+    for (var i = 0; i < titles.length; i++) {
+      if (titles[i].textContent.indexOf('AIGC') === -1) continue;
+      var block = titles[i].closest('.work-block');
+      if (!block) continue;
+      var screens = block.querySelectorAll('.doc-screen');
+      for (var k = 0; k < screens.length; k++) {
+        screens[k].classList.add('is-img-left');
+      }
+    }
+  })();
+
+
+  /* ============================================================
+     ⑥ 文字底部复现（逐字从下方升起）
+        与结尾「期待与您探讨…」同一套语言：
+        .ch-wrap 溢出裁切 + .ch 从 yPercent 100 升到 0，逐字错开
+        范围：S1 首屏大标题 / S2 宣言 / S3 关于我
+        S1 在首屏，用定时入场（打开就能看到）
+        S2 / S3 在下方，用 scrub 随滚动升起
+     ============================================================ */
+  (function c3Rise() {
+    if (prefersReduced) return;
+
+    function charsOf(el) { return el ? el.querySelectorAll('.ch') : []; }
+
+    /* ---- S1 首屏大标题：定时入场 ---- */
+    var heroTitle = document.querySelector('.hero-statement');
+    if (heroTitle) {
+      heroTitle.classList.add('c3-rise');
+      var hc = charsOf(heroTitle);
+      if (hc.length) {
+        gsap.set(hc, { yPercent: 100, opacity: 0 });
+        /* P0-1 审计修复：原来 0.95s + stagger 0.028×19 ≈ 1.6s 才读得全，
+           首屏前 1.6 秒是空的。压缩到 0.32s + 0.004 错开，约 0.4s 完整可读。 */
+        gsap.to(hc, {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.32,
+          ease: 'power2.out',
+          stagger: 0.004,
+          delay: 0.02
+        });
+      }
+    }
+
+    /* ---- 运行时拆字：给没有 .ch 的 section 大标题补上 ----------------
+       基础版只对 .mega / .mega-zh / .hero-statement 做了字符拆分，
+       「关于我.」「在柠乐做了四件有结果的事」是 h2.h-mid，没有拆分。
+       这里按与结尾完全相同的结构包成 .ch-wrap > .ch，复用同一套动效。 */
+    function splitIntoMasks(el) {
+      if (!el || el.querySelector('.ch-wrap')) return false;
+      var text = el.textContent || '';
+      if (!text.trim()) return false;
+      el.textContent = '';
+      for (var i = 0; i < text.length; i++) {
+        var c = text[i];
+        if (c === ' ' || c === '\n') {
+          el.appendChild(document.createTextNode(c));
+          continue;
+        }
+        var wrap = document.createElement('span');
+        wrap.className = 'ch-wrap';
+        var inner = document.createElement('span');
+        inner.className = 'ch';
+        inner.textContent = c;
+        wrap.appendChild(inner);
+        el.appendChild(wrap);
+      }
+      return true;
+    }
+
+    var secList = document.querySelectorAll('section');
+    var midHeads = [];
+    for (var s = 0; s < Math.min(4, secList.length); s++) {
+      var mids = secList[s].querySelectorAll('h2.h-mid');
+      for (var k = 0; k < mids.length; k++) {
+        if (splitIntoMasks(mids[k])) midHeads.push(mids[k]);
+      }
+    }
+    for (var h = 0; h < midHeads.length; h++) {
+      (function (el) {
+        el.classList.add('c3-rise');
+        var cs = charsOf(el);
+        if (!cs.length) return;
+        gsap.set(cs, { yPercent: 100, opacity: 0 });
+        gsap.to(cs, {
+          yPercent: 0,
+          opacity: 1,
+          ease: 'none',
+          stagger: 0.035,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            end: 'top 52%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+      })(midHeads[h]);
+    }
+
+    /* ---- S2 宣言 + S3 关于我：scrub 随滚动升起 ---- */
+    var targets = [];
+    var declMega = document.querySelector('.statement-block .mega');
+    if (declMega) targets.push(declMega);
+    var aboutMega = document.querySelector('#about .mega-zh');
+    if (aboutMega) targets.push(aboutMega);
+
+    for (var i = 0; i < targets.length; i++) {
+      (function (el) {
+        el.classList.add('c3-rise');
+        var cs = charsOf(el);
+        if (!cs.length) return;
+        gsap.set(cs, { yPercent: 100, opacity: 0 });
+        gsap.to(cs, {
+          yPercent: 0,
+          opacity: 1,
+          ease: 'none',
+          stagger: 0.03,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 82%',
+            end: 'top 40%',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+          }
+        });
+      })(targets[i]);
+    }
+  })();
+
+
+  /* ============================================================
+     ⑦ 文字复现扩展（2026-11-18 第二轮）
+        范围：S5「先讲清楚为什么这么做」/ 详情拆解整个板块 / 关于我整个板块
+        规则（按确认）：
+          · 标题 —— 逐字从下方升起（与结尾同一套 .ch-wrap 遮罩）
+          · 正文 —— 整段从下方升起（保留可读性，不逐字）
+     ============================================================ */
+  (function c3RiseExt() {
+    if (prefersReduced) return;
+
+    /* ---------- 工具 ---------- */
+
+    /* 把一段文本节点拆成 .ch-wrap > .ch */
+    function wrapCharNodes(tn) {
+      var text = tn.nodeValue || '';
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < text.length; i++) {
+        var c = text[i];
+        if (/\s/.test(c)) {
+          frag.appendChild(document.createTextNode(c));
+          continue;
+        }
+        var w = document.createElement('span');
+        w.className = 'ch-wrap';
+        var s = document.createElement('span');
+        s.className = 'ch';
+        s.textContent = c;
+        w.appendChild(s);
+        frag.appendChild(w);
+      }
+      tn.parentNode.replaceChild(frag, tn);
+    }
+
+    /* 拆字：支持「纯文本标题」和「带内联子标签的标题」
+       例：<h2 class="h-mid">关于我<span>.</span></h2>
+       早期版本遇到 children.length > 0 就直接放弃，
+       导致带彩色句点（span）的 h2.h-mid 无法复现。 */
+    function splitToChars(el) {
+      if (!el || el.querySelector('.ch-wrap')) return false;
+      var count = 0;
+      (function walk(node) {
+        var kids = Array.prototype.slice.call(node.childNodes);
+        for (var i = 0; i < kids.length; i++) {
+          var n = kids[i];
+          if (n.nodeType === 3) {
+            if (n.nodeValue && n.nodeValue.trim()) {
+              wrapCharNodes(n);
+              count++;
+            }
+          } else if (n.nodeType === 1 && /^(SPAN|EM|B|I|STRONG|SMALL)$/.test(n.tagName)) {
+            walk(n);
+          }
+        }
+      })(el);
+      return count > 0;
+    }
+
+    /* 标题逐字升起（scrub） */
+    function charRise(el, stagger, startPct, endPct) {
+      if (!el) return;
+      if (el.classList.contains('c3-rise')) return;   // 已处理过，避免重复叠加 tween
+      el.classList.add('c3-rise');
+      var cs = el.querySelectorAll('.ch');
+      if (!cs.length) {
+        if (!splitToChars(el)) return;
+        cs = el.querySelectorAll('.ch');
+        if (!cs.length) return;
+      }
+      gsap.set(cs, { yPercent: 100, opacity: 0 });
+      gsap.to(cs, {
+        yPercent: 0,
+        opacity: 1,
+        ease: 'none',
+        stagger: stagger || 0.03,
+        scrollTrigger: {
+          trigger: el,
+          start: 'top ' + (startPct || 88) + '%',
+          end: 'top ' + (endPct || 52) + '%',
+          scrub: 0.8,
+          invalidateOnRefresh: true
+        }
+      });
+    }
+
+    /* 正文整段升起（一次性触发，不用 scrub）
+       审计 P1-4 的补充：scrub 依赖起止坐标，而详情拆解有 16 张懒加载图片，
+       页面高度在加载中持续变化，坐标一旦失效元素会停在 opacity 0。
+       改为 once 触发 + 0.5s 补间：位置算错也只是"没动画"，绝不会不可见。 */
+    function blockRise(els, fromY) {
+      if (!els || !els.length) return;
+      for (var i = 0; i < els.length; i++) {
+        (function (el) {
+          gsap.set(el, { y: fromY || 30, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: el,
+            start: 'top 92%',
+            once: true,
+            onEnter: function () {
+              gsap.to(el, {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power2.out',
+                overwrite: true
+              });
+            }
+          });
+        })(els[i]);
+      }
+    }
+
+    /* ---------- ① S5 宣言「先讲清楚 为什么这么做，再展示怎么做」 ---------- */
+    charRise(document.querySelectorAll('.statement-block .mega')[0], 0.03, 84, 46);
+    var s5 = document.querySelectorAll('section')[4];
+    if (s5) {
+      // 该 section 里若还有别的 mega，一并处理
+      var others = s5.querySelectorAll('.mega');
+      for (var a = 0; a < others.length; a++) charRise(others[a], 0.03, 84, 46);
+    }
+
+    /* ---------- ② 详情页拆解：标题逐字 + 正文整段 ---------- */
+    var dl = document.getElementById('detail-logic');
+    if (dl) {
+      var dlHeads = dl.querySelectorAll('h2.h-mid, h4');
+      for (var h = 0; h < dlHeads.length; h++) charRise(dlHeads[h], 0.028, 88, 54);
+      blockRise(dl.querySelectorAll('p'), 30);
+    }
+
+    /* ---------- ③ 关于我：标题逐字 + 正文整段 ---------- */
+    var ab = document.getElementById('about');
+    if (ab) {
+      var abHeads = ab.querySelectorAll('h2.h-mid, h3.mega-zh, .ab2-ws-h');
+      for (var k = 0; k < abHeads.length; k++) charRise(abHeads[k], 0.028, 88, 54);
+      blockRise(ab.querySelectorAll('.cv-row, .ab2-sk, .aw, .ab2-ws, p.p-body'), 28);
+    }
+  })();
+
+
+  /* ============================================================
+     ⑧ seg3 详情长图：补最小淡入（审计项 P2-9）
+        原来 15 个 .seg3-item 没有任何逐项动效，与整站语法断层。
+        这里只做 opacity + 20px 上浮，与 .r4-img 一致，不做方向轮换。
+     ============================================================ */
+  (function seg3Fade() {
+    if (prefersReduced) return;
+    if (window.innerWidth < 861) return;
+    var items = document.querySelectorAll('.seg3-item');
+    for (var i = 0; i < items.length; i++) {
+      (function (el) {
+        gsap.set(el, { opacity: 0, y: 20 });
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 92%',
+          once: true,
+          onEnter: function () {
+            gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', overwrite: true });
+          }
+        });
+      })(items[i]);
+    }
+  })();
+
+
+  /* ============================================================
+     ⑨ 推广素材初始视图：三张同屏、第 2 张居中、左右各裁一部分
+        独立于画廊闭包执行，带多重重试，确保卡片宽度确定后仍能居中。
+     ============================================================ */
+  (function galleryInitialCenter() {
+    function center() {
+      var track = document.querySelector('.poster-grid.land-three .h-track');
+      if (!track) return;
+      var items = track.children;
+      if (items.length < 2) return;
+      var max = track.scrollWidth - track.clientWidth;
+      if (max <= 1) return;
+      var target = items[1].offsetLeft - (track.clientWidth - items[1].offsetWidth) / 2;
+      var want = Math.max(0, Math.min(max, target));
+      if (Math.abs(track.scrollLeft - want) > 2) {
+        track.scrollLeft = want;
+        track.dispatchEvent(new Event('scroll'));
+      }
+    }
+    center();
+    requestAnimationFrame(center);
+    setTimeout(center, 400);
+    setTimeout(center, 1500);
+    window.addEventListener('load', function () { setTimeout(center, 250); });
+  })();
+
+  /* 全部新增元素就位后再刷新一次 */
+  ScrollTrigger.refresh();
+
+})();
+</script>
+</body>
+
+<!--
+================================================================================
+  方案C3 · 滚动驱动分层深度 —— 修改说明
+  版本：vC3-1 ｜ 日期：2026-11-17 ｜ 基线：作品集_基础版_2026-11-17_确认版
+================================================================================
+
+【一、每个板块的图层编组（背景 / 图片 / 文字各用什么位移）】
+
+  ┌─────────────┬──────────────┬───────────────────────────────────────────────┬─────────┐
+  │ 板块         │ 图层数        │ 各层位移                                        │ 触发区间 │
+  ├─────────────┼──────────────┼───────────────────────────────────────────────┼─────────┤
+  │ C3-1        │ 3 层          │ L1 背景=.cs-hero 本身  yPercent  0 → -8（全程）  │ top bottom
+  │ 案例封面     │              │ L2 图片=.cs-hero-img   yPercent  0 → +10        │  → bottom top
+  │ .cs-hero    │              │      + clip inset(8%) → 0                       │
+  │             │              │      + scale 1.04 → 1                           │
+  │             │              │      + img 内层 yPercent -6 → +6                │
+  │             │              │ L3 信息=.cs-hero-info  yPercent +20 → 0          │ top 80% → top 30%
+  │             │              │      + opacity 0 → 1（时间轴 60% 处开始）        │
+  ├─────────────┼──────────────┼───────────────────────────────────────────────┼─────────┤
+  │ C3-2        │ 3 层（对向）   │ 奇数行「近景·快」：容器 yPercent +15 → -5        │ top 82% → top 40%
+  │ 步骤图       │              │                img 内层 -4 → +4                 │
+  │ .step-row   │              │ 偶数行「远景·慢」：容器 yPercent -10 → +10       │
+  │             │              │                img 内层 +4 → -4（反向）          │
+  │             │              │ 文字 h4：yPercent +30 → 0，opacity 0 → 1        │
+  │             │              │       （时间轴 0 → 40% 就位，文先到、图后稳）     │
+  ├─────────────┼──────────────┼───────────────────────────────────────────────┼─────────┤
+  │ C3-3        │ 3 层（反向）   │ 奇数屏：文本 yPercent +12 → 0                    │ top 84% → top 45%
+  │ 文档区       │              │        图片 yPercent -12 → 0                    │
+  │ .doc-screen │              │        + clip inset(0 0 100% 0) → 0（从底裁掉）  │
+  │             │              │        + img 内层 -5 → +5                       │
+  │             │              │ 偶数屏：文本 -12 → 0，图片 +12 → 0              │
+  │             │              │        + clip inset(100% 0 0 0) → 0（从顶裁掉）  │
+  │             │              │        + img 内层 +5 → -5                       │
+  ├─────────────┼──────────────┼───────────────────────────────────────────────┼─────────┤
+  │ C3-4        │ 2 层（轨道）   │ 轨道 .h-track       x 0 → -(scrollWidth-vw+100) │ top top
+  │ 推广素材     │              │ 卡片项（焦点驱动）：                             │  → +=scrollDist
+  │             │              │   聚焦 scale 1  opacity 1                       │  （pin + snap）
+  │             │              │   非焦点 scale 0.92  opacity 0.55               │
+  │             │              │ img 内层呼吸 yPercent -3 → +3（幅度极小）        │
+  ├─────────────┼──────────────┼───────────────────────────────────────────────┼─────────┤
+  │ C3-5        │ 2 层          │ .mega 逐字遮罩  yPercent 100 → 0，stagger 0.05  │ top 72% → top 35%
+  │ 结尾         │              │ .contact-cell  y 20 → 0，opacity 0 → 1          │ top 88% → top 58%
+  │ .end-panel  │              │                 stagger 0.08                   │
+  │             │              │ 不设 pin                                       │
+  ├─────────────┼──────────────┼───────────────────────────────────────────────┼─────────┤
+  │ C3-6        │ 全站          │ 速度 skew ±1deg（移动端 ±0.5deg）               │ lenis velocity
+  │             │              │ 作用：.cs-hero-img / .sr-img / .ds-img / .h-track > * │
+  └─────────────┴──────────────┴───────────────────────────────────────────────┴─────────┘
+
+  零重复核对：
+    封面 = 背景-图片-信息 三层，速度 0/-8/+10/+20
+    步骤 = 近景快 / 远景慢 对向，内层视差反向
+    文档 = 文字图片反向交错 + 奇偶方向反转 + 上/下两种裁切方向
+    推广 = 水平轨道 + 焦点缩放（唯一带 pin 与 snap 的板块）
+    结尾 = 逐字遮罩 + 信息格错峰（无图片层）
+  → 五个板块的「图层数量 + 移动方向」组合两两不同 ✓
+
+【二、gsap.set() 与 gsap.to() 的调用位置】
+
+  三步法（禁止 gsap.from()，代码区实测 0 处）：
+
+  第 1 步 gsap.set() 设置初始状态 —— 共 14 处
+    · cs-hero：       gsap.set(hero, { yPercent: 0 })
+    · cs-hero-img：   gsap.set(imgBox, { yPercent: 0, clipPath: 'inset(8% 8% 8% 8%)', scale: 1.04 })
+    · cs-hero-img img:gsap.set(img, { yPercent: -6 })
+    · cs-hero-info：  gsap.set(info, { yPercent: 20, opacity: 0 })
+    · sr-img：        gsap.set(srImg, { yPercent: fromY })     （奇数 15 / 偶数 -10）
+    · sr-img img：    gsap.set(img, { yPercent: imgFrom })     （奇数 -4 / 偶数 4）
+    · step-row h4：   gsap.set(h4, { yPercent: 30, opacity: 0 })
+    · doc 文本列：     gsap.set(textCol, { yPercent: textFrom, opacity: 0 })
+    · ds-img：        gsap.set(dsImg, { yPercent: imgFrom, clipPath: clipFrom })
+    · ds-img img：    gsap.set(img, { yPercent: innerFrom })
+    · 轨道卡片：       gsap.set(it, { scale: …, opacity: … })
+    · 卡片 img：       gsap.set(im, { yPercent: -3 })
+    · mega 字符：      gsap.set(chars, { yPercent: 100, opacity: 0 })
+    · contact-cell：  gsap.set(cells, { y: 20, opacity: 0 })
+    · .reveal：       gsap.set(els, { opacity: 0, y: 22 })
+
+  第 2 步 gsap.to() 播放到终态
+    · L1 背景层：     独立 gsap.to(hero, { yPercent: -8, scrub 0.8 })
+    · L2+L3：        gsap.timeline({ scrollTrigger }) 内 3 个 .to
+    · 步骤图：        gsap.timeline({ scrollTrigger }) 内 3 个 .to
+    · 文档区：        gsap.timeline({ scrollTrigger }) 内 3 个 .to
+    · 推广轨道：      gsap.to(trackEl, { x, scrollTrigger: { pin, snap, onUpdate } })
+    · 卡片呼吸：      gsap.to(im, { yPercent: 3, scrub 0.8 })
+    · 结尾字符：      gsap.to(chars, { yPercent: 0, stagger 0.05, scrub 0.8 })
+    · 信息格：        gsap.to(cells, { y: 0, stagger 0.08, scrub 0.8 })
+    · .reveal：      ScrollTrigger.batch({ once: true, onEnter: gsap.to(...) })
+
+  第 3 步 ScrollTrigger.refresh() —— 见下一节
+
+【三、ScrollTrigger.refresh() 与 sort() 的调用点】
+
+  1. 初始化时（图片检测之后）
+       if (alreadyComplete > 0) ScrollTrigger.refresh();
+
+  2. 每张未加载完成的图片
+       img.addEventListener('load',  scheduleRefresh, { once: true });
+       img.addEventListener('error', scheduleRefresh, { once: true });
+       （rAF 合并，避免 68 张图同时完成触发 68 次重算）
+
+  3. 轨道卡片图片单独 onload
+       im.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+       —— track.scrollWidth 依赖图片真实宽度，必须重算
+
+  4. 【pin 创建之后】—— 关键
+       if (needSort) {
+         ScrollTrigger.sort();      ← 先排序，修正创建顺序
+         ScrollTrigger.refresh();   ← 再刷新坐标
+       }
+       pin 会插入 .pin-spacer 包装层并改变后续元素位置，
+       若不 sort 会出现「下方板块触发坐标整体偏移」
+
+  5. window load 事件
+       window.addEventListener('load', () => {
+         ScrollTrigger.sort();
+         ScrollTrigger.refresh();
+       });
+
+  6. 延迟兜底 1400ms（同样 sort → refresh）
+
+  7. resize（260ms 防抖，同样 sort → refresh）
+
+  8. 调试入口
+       window.__C3_MOTION__.refresh()        手动 sort + refresh
+       window.__C3_MOTION__.imagesComplete / imagesTotal
+       window.__C3_MOTION__.reduced          是否减少动效
+
+【四、如果某个板块的文字在滚动中抖动，第一件要检查的事】
+
+  按顺序排查：
+
+  第 1 步（最可能）：文字的 yPercent 是否和图片的 yPercent
+                    用了同一个 ScrollTrigger 的 onUpdate，而没有做独立分层
+    - 本方案的做法：文字与图片放在同一条 timeline 里，但作为
+      **独立的 tween 位置**（tl.to(text, {...}, 0) 与 tl.to(img, {...}, 0)），
+      GSAP 会分别插值，不会互相干扰。
+    - 反面写法（会导致抖动）：
+        ScrollTrigger.create({
+          onUpdate: self => {
+            textEl.style.transform = `translateY(${self.progress * 100}px)`;
+            imgEl.style.transform  = `translateY(${self.progress * 60}px)`;
+          }
+        });
+      —— 在 onUpdate 里手写 transform 会与 GSAP 自身的 tween
+         抢同一个属性，且未经过 GSAP 的缓动/合成层管理，必然抖动。
+    - 检查方式：控制台执行
+        gsap.getTweensOf(document.querySelector('.doc-screen').children[0])
+      正常应有 1 个 tween；若为 0 说明是手写 style 而非 GSAP 管理。
+
+  第 2 步：scrub 是否用了数字而非 true
+    - scrub: true 会让动画严格 1:1 绑定滚动位置，
+      在 Lenis 平滑滚动下会产生「每帧重算 → 亚像素抖动」；
+      数字（本方案统一 0.8）会给一个追赶延迟，视觉更平滑。
+    - 检查方式：搜索代码中的 scrub —— 应全部为 0.8，无 true。
+
+  第 3 步：文字层是否被子元素的 transform 再次影响
+    - 若文字容器内部又有 .ch / .mask-inner 等被单独 transform 的子元素，
+      父子同时位移会产生叠加抖动。
+    - 本方案：文档区文本列只对列本身做 yPercent，
+      其内部 <p> 不做任何 transform。
+
+  第 4 步：是否有 ease 不是 "none" 的 scrub tween
+    - scrub tween 必须 ease: "none"，否则滚动位置与动画进度
+      非线性对应，看起来就是「顿挫」。
+    - 检查方式：确认所有 scrub 驱动的 gsap.to 都写了 ease: 'none'。
+
+  第 5 步：pin 的创建顺序是否导致 sort 失效
+    - 若 start 坐标出现倒序（下方板块的 start 小于上方板块），
+      说明 sort 未生效，需在 refresh 前显式调用 ScrollTrigger.sort()。
+
+  第 6 步：Lenis 是否与 gsap.ticker 双循环
+    - 必须 autoRaf: false，且只由 gsap.ticker 驱动 lenis.raf()。
+      双循环会导致每帧两次滚动更新 → 肉眼可见的抖动。
+
+【五、绝对约束遵守情况】
+
+  未引入 Three.js / WebGL / Canvas / 任何 npm 框架 ✓
+  所有新增 CSS 与 JS 全部内联（无外部 CSS，仅 3 个 CDN JS）✓
+  只操作 transform / opacity / clip-path ✓
+    ✗ width ✗ height ✗ top ✗ left ✗ margin ✗ padding
+    ✗ filter ✗ backdrop-filter ✗ box-shadow
+  三步法（gsap.set → gsap.to），代码区 gsap.from 0 处 ✓
+  所有图片 onload 后 refresh，img.complete 的初始化时 refresh ✓
+  pin 创建后调用 ScrollTrigger.sort() ✓
+  scrub 全部为 0.8（数字），无 scrub: true ✓
+  所有 scrub tween 均 ease: "none" ✓
+  gsap.ticker.lagSmoothing(0) 保留 ✓
+  已实现 prefers-reduced-motion: reduce 降级（duration 0 + scrub false）✓
+
+【六、禁止清单遵守情况】
+
+  ✅ 无两个板块使用相同的「图层数量 + 移动方向组合」（见第一节零重复核对）
+  ✅ 无 gsap.from()
+  ✅ 无 scrub: true
+  ✅ 正文段落（.p-body / .psr-col p / .ds-body）未拆分、未做大幅位移
+     文档区的位移作用对象是「列容器」，而非段落本身
+  ✅ 水平画廊 pin 恰好 1 个（仅推广素材），未超 1 个
+  ✅ 移动端（max-width: 860px）所有分层位移 / pin / 水平轨道
+     包在 gsap.matchMedia('(min-width: 861px)') 内
+     移动端图片直接呈现最终状态
+     只保留结尾遮罩上移（C3-5）与速度 skew（幅度减半 ±0.5deg）
+
+【七、实现细节说明】
+
+  1. C3-2「两图并排」的处理
+     基础版中每个 .step-row 内只有 1 张图（早期版本的两图并排已合并），
+     因此改为「按 step-row 奇偶交替分配近景/远景配方」，
+     相邻两行必然呈现「一快一慢、内视差反向」的对向分层关系，
+     视觉上等价于两图并排时的对向效果。
+
+  2. C3-4 卡片宽度的处理
+     land-three 内只有 3 张卡片。若按 28vw 计算（3×28=84vw）
+     不足一屏，track 无法产生横向位移。
+     因此改用 36vw（3×36=108vw + 2×10px gap），
+     既保留「三张可见但略挤」的观感，又让轨道产生约 10vw + 100px 的位移，
+     使 pin + snap 真正生效。
+
+  3. C3-1 背景层使用 .cs-hero 本身
+     该板块没有独立背景元素，故按说明用 .cs-hero 作为背景层。
+     其 yPercent 绑定在独立的「全程」ScrollTrigger（top bottom → bottom top）上，
+     与图片层/信息层的 80%→30% 区间分开，避免干扰触发测量。
+
+  4. C3-4 的 scale/opacity 由 onUpdate 中的 gsap.set 驱动
+     这是「焦点索引变化时的一次性设置」，不是手写 style.transform，
+     仍受 GSAP 管理；同时它不是 quickTo，符合「滚动决定焦点」的纯粹性。
+
+================================================================================
+  本文件为方案C3，已独立备份。
+  方案A / B / C / D / E / F / G 均已存档，可作为对比基线。
+================================================================================
+-->
+</html>

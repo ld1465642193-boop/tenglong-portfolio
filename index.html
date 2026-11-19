@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<script>if(/[?&]print/.test(location.search)){document.documentElement.classList.add('print-mode');}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>李腾龙 · 设计主管 · 视觉作品集</title>
@@ -11,6 +12,43 @@
 .reveal{opacity:1!important;transform:none!important;transition:none!important}
 .hero-meta,.hero-statement{opacity:1!important;transform:none!important}
 
+
+/* ===== 打印模式（?print）：强制显示所有动画元素，供导出 PDF ===== */
+html.print-mode .reveal,
+html.print-mode [data-ln-reveal],
+html.print-mode [data-ln-animate]{
+  opacity:1 !important; transform:none !important; filter:none !important;
+  transition:none !important; animation:none !important;
+}
+html.print-mode *{ animation-duration:0s !important; animation-delay:0s !important; transition-duration:0s !important; }
+html.print-mode .reveal{ transform:none !important; }
+
+/* ===== 多页查看器样式 ===== */
+.lb-title{ font-size:.95em; }
+.lb-count{ margin-left:12px; font-size:.8em; opacity:.65; font-variant-numeric:tabular-nums; }
+.lb-page{ position:relative; display:flex; justify-content:center; }
+.lb-nav{
+  position:fixed; top:50%; transform:translateY(-50%);
+  width:56px; height:56px; border-radius:50%; border:0; cursor:pointer;
+  background:rgba(255,255,255,.12); color:#fff; font-size:30px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(6px); transition:background .2s;
+}
+.lb-nav:hover{ background:rgba(255,255,255,.24); }
+.lb-prev{ left:24px; } .lb-next{ right:24px; }
+.lb-bar{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+  display:flex; gap:5px; padding:9px 14px; border-radius:999px;
+  background:rgba(0,0,0,.55); max-width:80vw; overflow-x:auto;
+}
+.lb-dot{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.32); cursor:pointer; flex:0 0 auto; }
+.lb-dot.on{ background:#fff; transform:scale(1.35); }
+
+/* ===== 案例区文档入口 ===== */
+.case-doc{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin:clamp(14px,2vw,22px) 0 0;
+}
 </style>
 </noscript>
 <style>
@@ -2686,6 +2724,12 @@ body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
       <div class="ck"><b>8<em>+</em></b><small>系列产品</small></div>
       <div class="ck"><b>1<em>套</em></b><small>视觉规范</small></div>
     </div>
+    <div class="case-doc reveal">
+      <span class="doc-badge">27 页</span>
+      <a class="doc-open" href="#" data-doc="gaoyi-plan" data-count="27" onclick="return openLB(this)">看完整策略提案 →</a>
+      <span class="doc-badge">16 页</span>
+      <a class="doc-open" href="#" data-doc="gaoyi-0413" data-count="16" onclick="return openLB(this)">看完整视觉规范 →</a>
+    </div>
 
     <!-- 封面 + 关键信息（左右对齐，不留空） -->
     <div class="cs-hero reveal">
@@ -2803,6 +2847,10 @@ body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
       <div class="ck"><b>4000<em>万+</em></b><small>曝光验证</small></div>
       <div class="ck"><b>5<em>方向</em></b><small>并行测试</small></div>
       <div class="ck"><b>6<em>条</em></b><small>内容策略</small></div>
+    </div>
+    <div class="case-doc reveal">
+      <span class="doc-badge">24 页</span>
+      <a class="doc-open" href="#" data-doc="bainian" data-count="24" onclick="return openLB(this)">看完整视觉升级方案 →</a>
     </div>
 
     <!-- 封面 + 关键信息 -->
@@ -3137,7 +3185,7 @@ body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
         </div>
         <div class="doc-hero-r">
           <span class="doc-badge">38 页</span>
-          <a class="doc-open" href="#" data-full="assets/pdf-full/collab/01.webp" onclick="return openLB(this)">看完整文档 →</a>
+          <a class="doc-open" href="#" data-doc="collab" data-count="38" onclick="return openLB(this)">看完整文档 →</a>
         </div>
       </div>
 
@@ -3214,7 +3262,7 @@ body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
         </div>
         <div class="doc-hero-r">
           <span class="doc-badge">31 页</span>
-          <a class="doc-open" href="#" data-full="assets/pdf-full/aigc/01.webp" onclick="return openLB(this)">看完整文档 →</a>
+          <a class="doc-open" href="#" data-doc="aigc" data-count="31" onclick="return openLB(this)">看完整文档 →</a>
         </div>
       </div>
 
@@ -3291,7 +3339,7 @@ body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
         </div>
         <div class="doc-hero-r">
           <span class="doc-badge">36 页</span>
-          <a class="doc-open" href="#" data-full="assets/pdf-full/yearend/01.webp" onclick="return openLB(this)">看完整文档 →</a>
+          <a class="doc-open" href="#" data-doc="yearend" data-count="36" onclick="return openLB(this)">看完整文档 →</a>
         </div>
       </div>
 
@@ -3417,15 +3465,85 @@ body.theme-cream{--forest:#0E0E0E;--forest-2:#141414;--forest-3:#1A1A1A}
 
 
 /* ============ 灯箱 ============ */
+const LB_DOC_TITLES = {
+  collab: '八中心运营设计高效协作分享',
+  aigc: 'AIGC 工作提效 · PS 插件',
+  yearend: '2025 品牌视觉一中心年终汇报',
+  'gaoyi-plan': '膏遗 · 视觉升级策略提案',
+  'gaoyi-0413': '膏遗 · 视觉规范与落地',
+  bainian: '百年医仁 · 主打产品视觉升级',
+  share: '设计运营课程分享'
+};
+let lbDoc = null, lbPage = 1, lbTotal = 1;
+
+function lbDocUrl(doc, i){
+  return 'assets/pdf-full/' + doc + '/' + String(i).padStart(2, '0') + '.jpg';
+}
+
 function openLB(el){
+  const doc = el.getAttribute('data-doc');
   const src = el.getAttribute('data-full');
-  if(!src) return false;
   const img = el.querySelector('img');
-  document.getElementById('lbName').textContent = img ? (img.alt || '完整长图') : '完整长图';
-  document.getElementById('lbStage').innerHTML = '<img src="' + src + '" alt="">';
+  const fallbackName = img ? (img.alt || '完整文档') : '完整文档';
+
+  if (doc) {
+    lbDoc = doc;
+    lbTotal = parseInt(el.getAttribute('data-count') || '1', 10) || 1;
+    lbPage = 1;
+    renderLB();
+  } else if (src) {
+    lbDoc = null;
+    lbTotal = 1;
+    document.getElementById('lbName').textContent = fallbackName;
+    document.getElementById('lbStage').innerHTML = '<img src="' + src + '" alt="">';
+  } else {
+    return false;
+  }
+
   document.getElementById('lb').classList.add('open');
   document.body.classList.add('locked');
   return false;
+}
+
+function renderLB(){
+  const nameEl = document.getElementById('lbName');
+  const stage = document.getElementById('lbStage');
+  const title = LB_DOC_TITLES[lbDoc] || lbDoc;
+  nameEl.innerHTML = '<span class="lb-title">' + title + '</span>'
+    + '<span class="lb-count">' + lbPage + ' / ' + lbTotal + '</span>';
+
+  let html = '<div class="lb-page">';
+  if (lbPage > 1) {
+    html += '<button class="lb-nav lb-prev" onclick="event.stopPropagation();lbGo(-1);return false" aria-label="上一页">‹</button>';
+  }
+  html += '<img src="' + lbDocUrl(lbDoc, lbPage) + '" alt="' + title + ' 第 ' + lbPage + ' 页">';
+  if (lbPage < lbTotal) {
+    html += '<button class="lb-nav lb-next" onclick="event.stopPropagation();lbGo(1);return false" aria-label="下一页">›</button>';
+  }
+  html += '</div>';
+
+  html += '<div class="lb-bar" onclick="event.stopPropagation()">';
+  for (let i = 1; i <= lbTotal; i++) {
+    html += '<span class="lb-dot' + (i === lbPage ? ' on' : '') + '" data-p="' + i + '"></span>';
+  }
+  html += '</div>';
+
+  stage.innerHTML = html;
+
+  stage.querySelectorAll('.lb-dot').forEach(function (d) {
+    d.addEventListener('click', function (e) {
+      e.stopPropagation();
+      lbPage = parseInt(d.getAttribute('data-p'), 10);
+      renderLB();
+    });
+  });
+}
+
+function lbGo(delta){
+  const n = lbPage + delta;
+  if (n < 1 || n > lbTotal) return;
+  lbPage = n;
+  renderLB();
 }
 function closeLB(){
   document.getElementById('lb').classList.remove('open');
@@ -3435,7 +3553,13 @@ function closeLB(){
 document.getElementById('lb').addEventListener('click', e => {
   if(e.target.id === 'lb' || e.target.id === 'lbStage') closeLB();
 });
-window.addEventListener('keydown', e => { if(e.key === 'Escape') closeLB(); });
+window.addEventListener('keydown', e => {
+  const open = document.getElementById('lb').classList.contains('open');
+  if (!open) return;
+  if (e.key === 'Escape') closeLB();
+  if (e.key === 'ArrowLeft') lbGo(-1);
+  if (e.key === 'ArrowRight') lbGo(1);
+});
 
 /* ============ 作品筛选 ============ */
 document.querySelectorAll('.wtab').forEach(btn => {
